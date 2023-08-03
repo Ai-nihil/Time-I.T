@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    tools:context=".MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:padding="15dp"
+        android:background="@drawable/border">
+
+        <ImageView
+            android:id="@+id/mainActivityImageViewLogo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            app:srcCompat="@drawable/ollopa_logo"
+            android:maxWidth="180dp"
+            android:adjustViewBounds="true"
+            android:layout_centerHorizontal="true"/>
+
+        <Button
+            android:id="@+id/mainActivityButtonLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:layout_marginTop="75dp"
+            android:layout_below="@id/mainActivityImageViewLogo"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="70dp"/>
+
+        <TextView
+            android:id="@+id/mainActivityTextViewRegisterInstruction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Do not have an account?"
+            android:layout_marginTop="30dp"
+            android:layout_below="@id/mainActivityButtonLogin"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:id="@+id/mainActivityTextViewRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/register"
+            android:layout_below="@id/mainActivityTextViewRegisterInstruction"
+            android:textAlignment="center"
+            android:textColor="@color/purple_700"/>
+    </RelativeLayout>
+
+</ScrollView>
