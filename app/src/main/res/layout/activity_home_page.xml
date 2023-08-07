@@ -1,19 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/light_gray"
     tools:context=".HomePageActivity">
 
-
-    <Button
-        android:id="@+id/homePageActivityButtonLogout"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Logout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_margin="15dp"
+        android:background="@drawable/border">
+
+        <TextClock
+            android:id="@+id/homePageActivityTextClockActualDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="6dp"
+            android:textAlignment="center"
+            android:textColor="#555555"
+            android:textSize="16sp"
+            android:format12Hour="EEEE, MMMM dd, yyyy"
+            android:timeZone="@string/time_zone_singapore"/>
+
+        <TextClock
+            android:id="@+id/homePageActivityTextClockActualClock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/homePageActivityTextClockActualDate"
+            android:padding="6dp"
+            android:textAlignment="center"
+            android:textColor="#555555"
+            android:textSize="16sp"
+            android:format12Hour="hh:mm:ss a"
+            android:timeZone="@string/time_zone_singapore"/>
+
+        <Button
+            android:id="@+id/homePageActivityButtonClockIn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/homePageActivityTextClockActualClock"
+            android:layout_marginTop="10dp"
+            android:text="Clock-In"
+            android:layout_marginRight="70dp"
+            android:layout_marginLeft="70dp"/>
+
+        <Button
+            android:id="@+id/homePageActivityButtonLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/homePageActivityButtonClockIn"
+            android:layout_marginTop="10dp"
+            android:text="Logout"
+            android:layout_marginRight="70dp"
+            android:layout_marginLeft="70dp"/>
+
+    </RelativeLayout>
+
+
+</ScrollView>
