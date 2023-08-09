@@ -1,13 +1,14 @@
 package com.example.ojtproject;
 
 public class ReadWriteUserTimeDetails {
-    private String dateTime,status;
+    private String dateTime,dateDay,status;
 
     public ReadWriteUserTimeDetails() {
     }
 
-    public ReadWriteUserTimeDetails (String dateTime, String status) {
+    public ReadWriteUserTimeDetails (String dateTime, String dateDay, String status) {
         this.dateTime = dateTime;
+        this.dateDay = dateDay;
         this.status = status;
     }
 
@@ -26,4 +27,8 @@ public class ReadWriteUserTimeDetails {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public String getDateDay() { return dateDay; }
+
+    public void setDateDay(String dateDay) { this.dateDay = dateDay; }
 }

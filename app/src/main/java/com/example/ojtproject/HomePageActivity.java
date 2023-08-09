@@ -1,14 +1,19 @@
 package com.example.ojtproject;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.icu.util.Calendar;
 import android.net.ParseException;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,8 +23,11 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.ktx.Firebase;
 
 import java.text.DateFormat;
@@ -46,6 +54,16 @@ public class HomePageActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+        // In your main activity's onCreate or another appropriate location
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(HomePageActivity.this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(HomePageActivity.this, 0, intent, PendingIntent.FLAG_MUTABLE);
+
+        //Set the alarm to trigger every few minutes (adjust as needed)
+        long intervalMillis = 5000; // Every 30 minutes
+        long initialMillis = SystemClock.elapsedRealtime() + intervalMillis;
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, initialMillis, intervalMillis, pendingIntent);
 
         setContentView(R.layout.activity_home_page);
 
@@ -119,54 +137,112 @@ public class HomePageActivity extends AppCompatActivity {
                     if (currentUser != null) {
                         String uid = currentUser.getUid();
 
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Attendance").child(uid);
+
+                        // Get the current date and time from the TextClocks
+                        String currentTime = homePageActivityTextClockActualClock.getText().toString();
+                        String currentDate = homePageActivityTextClockActualDate.getText().toString();
+                        String currentDateAndTime = new String(currentDate + " - " + currentTime);
+
+                        // Get the current date and time
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("lastTappedDate", currentDate);
+                        editor.putString("lastTappedTime", currentTime);
+                        editor.apply();
+
+                        String[] currentDateParts = currentDate.split(",");
+                        String currentDayOfWeek = currentDateParts[0];
 
 
-                        try {
-                            // Get the current date and time from the TextClocks
-                            String currentTime = homePageActivityTextClockActualClock.getText().toString();
-                            String currentDate = homePageActivityTextClockActualDate.getText().toString();
-                            String currentDateAndTime = new String(currentDate + " - " + currentTime);
+                        databaseReference.orderByChild("dateDay").equalTo(currentDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    // A record for today already exists, prevent clock-in
+                                    Toast.makeText(HomePageActivity.this, "You already have a status for your clock-in today.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    try {
 
-                            // Create a new TimeRecord object
+
+                                        // Create a new TimeRecord object
 //                            ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails();
 //                            readWriteUserTimeDetails.setDateTime(currentDateAndTime);
 
-                            SimpleDateFormat inputFormat = new SimpleDateFormat("hh:mm:ss a", Locale.getDefault());
-                            SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                                        SimpleDateFormat inputFormat = new SimpleDateFormat("hh:mm:ss a", Locale.getDefault());
+                                        SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
 
-                            Date dateTime = inputFormat.parse(currentTime);
-                            String militaryTimeFormat = outputFormat.format(dateTime);
+                                        Date dateTime = inputFormat.parse(currentTime);
+                                        String militaryTimeFormat = outputFormat.format(dateTime);
 
-                            ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails();
-                            readWriteUserTimeDetails.setDateTime(currentDateAndTime);
+                                        ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails();
+                                        readWriteUserTimeDetails.setDateTime(currentTime);
+                                        readWriteUserTimeDetails.setDateDay(currentDate);
 
-                            // Split the time string into hours, minutes, and seconds
-                            String[] timeParts = militaryTimeFormat.split(":");
-                            int currentHour = Integer.parseInt(timeParts[0]);
-                            int currentMinute = Integer.parseInt(timeParts[1]);
-                            int currentSecond = Integer.parseInt(timeParts[2]);
+                                        // Split the time string into hours, minutes, and seconds
+                                        String[] currentTimeParts = militaryTimeFormat.split(":");
+                                        int currentHour = Integer.parseInt(currentTimeParts[0]);
+                                        int currentMinute = Integer.parseInt(currentTimeParts[1]);
+                                        int currentSecond = Integer.parseInt(currentTimeParts[2]);
 
-                            System.out.println(currentHour + ":" + currentMinute + ":" + currentSecond);
+                                        String[] currentDateParts = currentDate.split(",");
+                                        String currentDayOfWeek = currentDateParts[0];
 
-                            String status;
-                            if (currentHour > 15 || (currentHour == 15 && currentMinute > 2) || (currentHour == 15 && currentMinute == 2 && currentSecond > 0)) {
-                                status = "Late";
-                                Toast.makeText(HomePageActivity.this, "You are late!", Toast.LENGTH_SHORT).show();
-                            } else {
-                                status = "On-time";
-                                Toast.makeText(HomePageActivity.this, "Congratulations! You made it on time!", Toast.LENGTH_SHORT).show();
+                                        System.out.println(currentHour + ":" + currentMinute + ":" + currentSecond);
+
+                                        String status;
+                                        if(currentDayOfWeek.equals("Thursday")){
+                                            if ((currentHour > 23 || (currentHour == 23 && currentMinute > 40) || (currentHour == 23 && currentMinute == 40 && currentSecond > 0))){
+                                                Toast.makeText(HomePageActivity.this, "Attendance not yet available. Please wait until the designated '\"'on-time'\"' start time of 8:45 AM - 9 to mark your attendance.", Toast.LENGTH_SHORT).show();
+                                            } else if ((currentHour > 23 || (currentHour == 23 && currentMinute > 12) || (currentHour == 23 && currentMinute == 12 && currentSecond > 0))) {
+                                                status = "Absent";
+                                                readWriteUserTimeDetails.setStatus(status);
+                                                // Write the time record to the Firebase Realtime Database under the "attendance" node with the user's UID as the key
+                                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                                                databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
+                                                Log.d("Military Time", militaryTimeFormat);
+                                                Toast.makeText(HomePageActivity.this, "You are marked absent for today!", Toast.LENGTH_SHORT).show();
+                                            } else if (currentHour > 15 || (currentHour == 15 && currentMinute > 2) || (currentHour == 15 && currentMinute == 2 && currentSecond > 0)) {
+                                                status = "Late";
+                                                readWriteUserTimeDetails.setStatus(status);
+                                                // Write the time record to the Firebase Realtime Database under the "attendance" node with the user's UID as the key
+                                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                                                databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
+                                                Log.d("Military Time", militaryTimeFormat);
+                                                Toast.makeText(HomePageActivity.this, "You are late!", Toast.LENGTH_SHORT).show();
+                                            } else if (currentHour > 8 || (currentHour == 8 && currentMinute > 45) || (currentHour == 8 && currentMinute == 45 && currentSecond > 0)){
+                                                status = "On-time";
+                                                readWriteUserTimeDetails.setStatus(status);
+                                                // Write the time record to the Firebase Realtime Database under the "attendance" node with the user's UID as the key
+                                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                                                databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
+                                                Log.d("Military Time", militaryTimeFormat);
+                                                Toast.makeText(HomePageActivity.this, "Congratulations! You made it on time!", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(HomePageActivity.this, "Attendance not yet available. Please wait until the designated '\"'on-time'\"' start time of 8:45 AM - 9 to mark your attendance.", Toast.LENGTH_SHORT).show();
+                                            }
+
+
+
+                                        } else {
+                                            Toast.makeText(HomePageActivity.this, "Get some rest. There is no work today!", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    } catch (java.text.ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
                             }
-                            readWriteUserTimeDetails.setStatus(status);
 
-                            // Write the time record to the Firebase Realtime Database under the "attendance" node with the user's UID as the key
-                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                            databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
-                            Log.d("Military Time", militaryTimeFormat);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        } catch (java.text.ParseException e) {
-                            e.printStackTrace();
-                        }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+
 
 
                     } else {
@@ -183,6 +259,8 @@ public class HomePageActivity extends AppCompatActivity {
 
             }
         });
+
+
 
 
 
