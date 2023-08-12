@@ -190,11 +190,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if(authProfile.getCurrentUser() != null){
-//            Toast.makeText(LoginActivity.this, "Already logged in!", Toast.LENGTH_SHORT).show();
-//            //Start the HomePageActivity
-//            startActivity(new Intent(LoginActivity.this, HomePageActivity.class));
-//            finish(); //Close LoginActivity
-
             Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);

@@ -25,7 +25,6 @@ import java.util.List;
 
 public class UserAttendanceRecordsActivity extends AppCompatActivity {
 
-//    private ListView listView;
     private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
     private List<ReadWriteUserTimeDetails> readWriteUserTimeDetailsList;
@@ -39,12 +38,11 @@ public class UserAttendanceRecordsActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // Initialize UI components
-//        listView = findViewById(R.id.userAttendanceRecordsActivityListView);
         readWriteUserTimeDetailsList = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference("Attendance");
 
         listAdapter = new ListAdapter(UserAttendanceRecordsActivity.this, readWriteUserTimeDetailsList);
-//        listView.setAdapter(listAdapter);
+
         binding.userAttendanceRecordsActivityListView.setAdapter(listAdapter);
         binding.userAttendanceRecordsActivityListView.setClickable(true);
         binding.userAttendanceRecordsActivityListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -89,7 +87,6 @@ public class UserAttendanceRecordsActivity extends AppCompatActivity {
             //Open Login Activity after successful registration
             Intent intent = new Intent(UserAttendanceRecordsActivity.this, LoginActivity.class);
             startActivity(intent);
-//            finish();//to close Register Activity
         }
     }
 }
