@@ -48,10 +48,20 @@
             android:layout_marginLeft="70dp"/>
 
         <Button
-            android:id="@+id/homePageActivityButtonLogout"
+            android:id="@+id/homePageActivityButtonViewRecords"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/homePageActivityButtonClockIn"
+            android:layout_marginTop="10dp"
+            android:text="View Records"
+            android:layout_marginRight="70dp"
+            android:layout_marginLeft="70dp"/>
+
+        <Button
+            android:id="@+id/homePageActivityButtonLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/homePageActivityButtonViewRecords"
             android:layout_marginTop="10dp"
             android:text="Logout"
             android:layout_marginRight="70dp"

@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -16,6 +17,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OJTProject"
         tools:targetApi="31">
+        <activity
+            android:name=".UserAttendanceRecordDetailsActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".UserAttendanceRecordsActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".ForgotPasswordActivity"
             android:exported="false"
@@ -62,6 +77,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <receiver
             android:name=".AlarmReceiver"
             android:enabled="true"

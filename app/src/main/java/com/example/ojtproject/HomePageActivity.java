@@ -39,7 +39,8 @@ import java.util.TimeZone;
 public class HomePageActivity extends AppCompatActivity {
 
     private Button homePageActivityButtonLogout,
-                   homePageActivityButtonClockIn;
+                   homePageActivityButtonClockIn,
+                   homePageActivityButtonViewRecords;
     private TextClock homePageActivityTextClockActualDate;
     private TextClock homePageActivityTextClockActualClock;
     private TextView homePageActivityTextViewActualTime;
@@ -55,15 +56,15 @@ public class HomePageActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
 
-        // In your main activity's onCreate or another appropriate location
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(HomePageActivity.this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(HomePageActivity.this, 0, intent, PendingIntent.FLAG_MUTABLE);
-
-        //Set the alarm to trigger every few minutes (adjust as needed)
-        long intervalMillis = 5000; // Every 30 minutes
-        long initialMillis = SystemClock.elapsedRealtime() + intervalMillis;
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, initialMillis, intervalMillis, pendingIntent);
+//        // In your main activity's onCreate or another appropriate location
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        Intent intent = new Intent(HomePageActivity.this, AlarmReceiver.class);
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(HomePageActivity.this, 0, intent, PendingIntent.FLAG_MUTABLE);
+//
+//        //Set the alarm to trigger every few minutes (adjust as needed)
+//        long intervalMillis = 5000; // Every 30 minutes
+//        long initialMillis = SystemClock.elapsedRealtime() + intervalMillis;
+//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, initialMillis, intervalMillis, pendingIntent);
 
         setContentView(R.layout.activity_home_page);
 
@@ -209,7 +210,7 @@ public class HomePageActivity extends AppCompatActivity {
                                                 databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
                                                 Log.d("Military Time", militaryTimeFormat);
                                                 Toast.makeText(HomePageActivity.this, "You are late!", Toast.LENGTH_SHORT).show();
-                                            } else if (currentHour > 8 || (currentHour == 8 && currentMinute > 45) || (currentHour == 8 && currentMinute == 45 && currentSecond > 0)){
+                                            } else if (currentHour > 8 || (currentHour == 8 && currentMinute > 45) || (currentHour == 8 && currentMinute == 45 && currentSecond >= 0)){
                                                 status = "On-time";
                                                 readWriteUserTimeDetails.setStatus(status);
                                                 // Write the time record to the Firebase Realtime Database under the "attendance" node with the user's UID as the key
@@ -262,8 +263,48 @@ public class HomePageActivity extends AppCompatActivity {
 
 
 
+        homePageActivityButtonViewRecords = findViewById(R.id.homePageActivityButtonViewRecords);
+        homePageActivityButtonViewRecords.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePageActivity.this, UserAttendanceRecordsActivity.class);
+                startActivity(intent);
+//                finish();
+            }
+        });
 
+        // Calculate the time difference between the current time and the desired trigger time
+        // For example, let's trigger at 2:31 AM
+        int desiredHour = 2;
+        int desiredMinute = 37;
 
+        // Get the current time in the desired timezone
+        android.icu.util.Calendar currentTime = android.icu.util.Calendar.getInstance(android.icu.util.TimeZone.getTimeZone("Asia/Singapore"));
 
+        long timeDifferenceMillis = calculateTimeDifference(currentTime, desiredHour, desiredMinute);
+        setupAlarm(timeDifferenceMillis);
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void setupAlarm(long timeDifferenceMillis) {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_MUTABLE);
+
+        // Set up the AlarmManager to trigger at the calculated time
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeDifferenceMillis, pendingIntent);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private long calculateTimeDifference(android.icu.util.Calendar currentTime, int desiredHour, int desiredMinute) {
+        android.icu.util.Calendar triggerTime = (android.icu.util.Calendar) currentTime.clone();
+        triggerTime.set(android.icu.util.Calendar.HOUR_OF_DAY, desiredHour);
+        triggerTime.set(android.icu.util.Calendar.MINUTE, desiredMinute);
+        triggerTime.set(android.icu.util.Calendar.SECOND, 0);
+        triggerTime.set(android.icu.util.Calendar.MILLISECOND, 0);
+
+        return triggerTime.getTimeInMillis() - currentTime.getTimeInMillis();
+    }
+
 }
