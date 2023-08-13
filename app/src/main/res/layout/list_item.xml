@@ -48,12 +48,12 @@
                         android:text="DateTime"
                         android:textStyle="bold"/>
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/listItemTextViewDateTimeClockOut"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="-DateTime"-->
-<!--                        android:textStyle="bold"/>-->
+                    <TextView
+                        android:id="@+id/listItemTextViewDateTimeClockOut"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-DateTime"
+                        android:textStyle="bold"/>
 
                 </LinearLayout>
 
@@ -70,12 +70,12 @@
                         android:text="On-Time"
                         android:textStyle="bold"/>
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/listItemTextViewStatusClockOut"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="-DateTime"-->
-<!--                        android:textStyle="bold"/>-->
+                    <TextView
+                        android:id="@+id/listItemTextViewStatusClockOut"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-DateTime"
+                        android:textStyle="bold"/>
 
                 </LinearLayout>
 

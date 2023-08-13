@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
+
+    //Constructors for passing either ArrayList or List
     public ListAdapter(Context context, ArrayList<ReadWriteUserTimeDetails> userAttendanceArrayList){
         super(context, R.layout.list_item, userAttendanceArrayList);
     }
@@ -35,9 +37,10 @@ public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
         TextView listItemTextViewDateTimeClockIn = convertView.findViewById(R.id.listItemTextViewDateTimeClockIn);
         TextView listItemTextViewStatusClockIn = convertView.findViewById(R.id.listItemTextViewStatusClockIn);
 
+        //Initialize TextView values of each list item in the list view of UserAttendanceRecordsActivity with data from FireBase
         listItemTextViewDateDay.setText(readWriteUserTimeDetails.getDateDay());
-        listItemTextViewDateTimeClockIn.setText(readWriteUserTimeDetails.getDateTime());
-        listItemTextViewStatusClockIn.setText(readWriteUserTimeDetails.getStatus());
+        listItemTextViewDateTimeClockIn.setText(readWriteUserTimeDetails.getDateClockInTime());
+        listItemTextViewStatusClockIn.setText(readWriteUserTimeDetails.getClockInStatus());
 
         return convertView;
     }

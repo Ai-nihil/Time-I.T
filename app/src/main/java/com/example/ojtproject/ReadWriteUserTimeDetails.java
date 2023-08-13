@@ -4,21 +4,25 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class ReadWriteUserTimeDetails implements Parcelable {
-    private String dateTime, dateDay, status;
+    private String dateClockInTime, dateDay, clockInStatus, dateClockOutTime, clockOutStatus;
 
     public ReadWriteUserTimeDetails() {
     }
 
-    public ReadWriteUserTimeDetails(String dateTime, String dateDay, String status) {
-        this.dateTime = dateTime;
+    public ReadWriteUserTimeDetails(String dateDay, String dateClockInTime, String clockInStatus, String dateClockOutTime, String clockOutStatus) {
         this.dateDay = dateDay;
-        this.status = status;
+        this.dateClockInTime = dateClockInTime;
+        this.clockInStatus = clockInStatus;
+        this.dateClockOutTime = dateClockOutTime;
+        this.clockOutStatus = clockOutStatus;
     }
 
     protected ReadWriteUserTimeDetails(Parcel in) {
-        dateTime = in.readString();
         dateDay = in.readString();
-        status = in.readString();
+        dateClockInTime = in.readString();
+        clockInStatus = in.readString();
+        dateClockOutTime = in.readString();
+        clockOutStatus = in.readString();
     }
 
     public static final Creator<ReadWriteUserTimeDetails> CREATOR = new Creator<ReadWriteUserTimeDetails>() {
@@ -33,20 +37,36 @@ public class ReadWriteUserTimeDetails implements Parcelable {
         }
     };
 
-    public String getDateTime() {
-        return dateTime;
+    public String getDateClockInTime() {
+        return dateClockInTime;
     }
 
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
+    public void setDateClockInTime(String dateClockInTime) {
+        this.dateClockInTime = dateClockInTime;
     }
 
-    public String getStatus() {
-        return status;
+    public String getClockInStatus() {
+        return clockInStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setClockInStatus(String clockInStatus) {
+        this.clockInStatus = clockInStatus;
+    }
+
+    public String getDateClockOutTime() {
+        return dateClockOutTime;
+    }
+
+    public void setDateClockOutTime(String dateClockOutTime) {
+        this.dateClockOutTime = dateClockOutTime;
+    }
+
+    public String getClockOutStatus() {
+        return clockOutStatus;
+    }
+
+    public void setClockOutStatus(String clockOutStatus) {
+        this.clockOutStatus = clockOutStatus;
     }
 
     public String getDateDay() {
@@ -64,8 +84,10 @@ public class ReadWriteUserTimeDetails implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(dateTime);
         dest.writeString(dateDay);
-        dest.writeString(status);
+        dest.writeString(dateClockInTime);
+        dest.writeString(clockInStatus);
+        dest.writeString(dateClockOutTime);
+        dest.writeString(clockOutStatus);
     }
 }

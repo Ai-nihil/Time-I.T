@@ -22,6 +22,8 @@ public class UserAttendanceRecordDetailsActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         Intent intent = this.getIntent();
+
+        //Initialize TextView values with data from UserAttendanceRecordsActivity
         if (intent != null) {
             ReadWriteUserTimeDetails selectedRecord = (ReadWriteUserTimeDetails) intent.getParcelableExtra("selectedRecord");
 
@@ -30,11 +32,11 @@ public class UserAttendanceRecordDetailsActivity extends AppCompatActivity {
             userAttendanceRecordDetailsActivityTextViewDayDateValue.setText(dateDay);
 
             userAttendanceRecordDetailsActivityTextViewClockInTimeValue = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockInTimeValue);
-            String dateTime = selectedRecord.getDateTime();
+            String dateTime = selectedRecord.getDateClockInTime();
             userAttendanceRecordDetailsActivityTextViewClockInTimeValue.setText(dateTime);
 
             userAttendanceRecordDetailsActivityTextViewClockInStatusValue = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockInStatusValue);
-            String status = selectedRecord.getStatus();
+            String status = selectedRecord.getClockInStatus();
             userAttendanceRecordDetailsActivityTextViewClockInStatusValue.setText(status);
         }
     }

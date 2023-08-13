@@ -78,7 +78,7 @@ public class UserAttendanceRecordsActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Handle error
+
                 }
             });
         } else {
