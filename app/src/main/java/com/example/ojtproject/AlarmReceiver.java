@@ -24,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Locale;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -35,9 +37,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         String storedClockInDate = sharedPreferences.getString("lastTappedClockInDate", "");
         String storedClockInTime = sharedPreferences.getString("lastTappedClockInTime", "");
         String storedClockInStatus = sharedPreferences.getString("lastTappedClockInStatus", "");
-        String storedClockOutDate = sharedPreferences.getString("lastTappedClockOutDate", "");
-
-
 
         Calendar currentCalendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.getDefault());
@@ -53,10 +52,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         String[] currentDateParts = currentDate.split(",");
         String currentDayOfWeek = currentDateParts[0];
 
-        String dummyStoredClockInDate = "Saturday, August 12, 2023";
         // Check if the user tapped the button for today
-        if ((!currentDayOfWeek.equals("Saturday")) && (currentDayOfWeek.equals("Sunday"))){
-            if ((!dummyStoredClockInDate.equals(currentDate)) || (storedClockInDate.equals(currentDate) && (storedClockInHour < 8 || (storedClockInHour == 8 && storedClockInMinute < 45)))) {
+        if ((!currentDayOfWeek.equals("Saturday")) && (!currentDayOfWeek.equals("Sunday"))){
+            if ((!storedClockInDate.equals(currentDate)) || (storedClockInDate.equals(currentDate) && (storedClockInHour < 8 || (storedClockInHour == 8 && storedClockInMinute < 45)))) {
                 // Update status to "Absent" for today
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -85,21 +83,33 @@ public class AlarmReceiver extends BroadcastReceiver {
                 }
             }
             else{
-                // Update status to "On-time" for today
+                // Update clock-out status to "On-time" for today
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
                 if (currentUser != null) {
                     String uid = currentUser.getUid();
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                    String dummyStoredClockOutDate = "Saturday, August 12, 2023";
+
                     DatabaseReference userAttendanceRef = databaseReference.child("Attendance").child(uid);
 
                     userAttendanceRef.orderByChild("dateDay").equalTo(currentDate).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (!dataSnapshot.exists()) {
-                                // Update the status to "Absent"
-                                ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails(currentDate, storedClockInTime, storedClockInStatus, "6:00:00 PM", "On-time");
+                                SimpleDateFormat inputFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                                SimpleDateFormat outputFormat = new SimpleDateFormat("hh:mm:ss a", Locale.getDefault());
+
+                                //Turn the clock-in time from nonmilitary time to military time format
+                                Date dateClockInTime = null;
+                                try {
+                                    dateClockInTime = inputFormat.parse(storedClockInTime);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                String amPmTimeFormat = outputFormat.format(dateClockInTime);
+
+                                // Update the clock-out status to "On-Time"
+                                ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails(currentDate, amPmTimeFormat, storedClockInStatus, "6:00:00 PM", "On-time");
                                 userAttendanceRef.push().setValue(readWriteUserTimeDetails);
                             }
                         }

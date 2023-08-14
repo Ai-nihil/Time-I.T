@@ -21,8 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:clickable="true"
-        android:focusable="true"
         android:background="?attr/selectableItemBackground"
         android:layout_below="@+id/profile_image"
         android:paddingVertical="10dp">
@@ -55,7 +53,7 @@
         android:layout_below="@+id/userAttendanceRecordDetailsActivityTextViewDayDateRelativeLayout"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#000000"/>
+        android:background="@color/light_gray"/>
 
     <RelativeLayout
         android:id="@+id/userAttendanceRecordDetailsActivityTextViewClockInTimeLayout"
@@ -93,14 +91,12 @@
         android:layout_below="@+id/userAttendanceRecordDetailsActivityTextViewClockInTimeLayout"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#000000"/>
+        android:background="@color/light_gray"/>
 
     <RelativeLayout
         android:id="@+id/userAttendanceRecordDetailsActivityTextViewClockInStatusLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
         android:background="?attr/selectableItemBackground"
         android:layout_below="@id/userAttendanceRecordDetailsActivityTextViewClockInTimeLayout"
         android:paddingVertical="10dp">
@@ -114,11 +110,87 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Status"
+                android:text="Clock-In Status"
                 android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/userAttendanceRecordDetailsActivityTextViewClockInStatusValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="On-Time"
+                android:textSize="26sp"
+                android:textColor="#000000"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_below="@+id/userAttendanceRecordDetailsActivityTextViewClockInStatusLayout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/userAttendanceRecordDetailsActivityTextViewClockOutTimeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userAttendanceRecordDetailsActivityTextViewClockInStatusLayout"
+        android:paddingVertical="10dp">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="70dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clock-Out Time"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/userAttendanceRecordDetailsActivityTextViewClockOutTimeValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="6:00:00 PM"
+                android:textSize="26sp"
+                android:textColor="#000000"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_below="@+id/userAttendanceRecordDetailsActivityTextViewClockOutTimeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/userAttendanceRecordDetailsActivityTextViewClockOutStatusLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:layout_below="@id/userAttendanceRecordDetailsActivityTextViewClockOutTimeLayout"
+        android:paddingVertical="10dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="70dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clock-Out Status"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/userAttendanceRecordDetailsActivityTextViewClockOutStatusValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="On-Time"

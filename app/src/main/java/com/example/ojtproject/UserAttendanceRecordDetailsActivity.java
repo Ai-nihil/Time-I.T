@@ -32,12 +32,20 @@ public class UserAttendanceRecordDetailsActivity extends AppCompatActivity {
             userAttendanceRecordDetailsActivityTextViewDayDateValue.setText(dateDay);
 
             userAttendanceRecordDetailsActivityTextViewClockInTimeValue = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockInTimeValue);
-            String dateTime = selectedRecord.getDateClockInTime();
-            userAttendanceRecordDetailsActivityTextViewClockInTimeValue.setText(dateTime);
+            String dateClockInTime = selectedRecord.getDateClockInTime();
+            userAttendanceRecordDetailsActivityTextViewClockInTimeValue.setText(dateClockInTime);
 
             userAttendanceRecordDetailsActivityTextViewClockInStatusValue = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockInStatusValue);
-            String status = selectedRecord.getClockInStatus();
-            userAttendanceRecordDetailsActivityTextViewClockInStatusValue.setText(status);
+            String clockInStatus = selectedRecord.getClockInStatus();
+            userAttendanceRecordDetailsActivityTextViewClockInStatusValue.setText(clockInStatus);
+
+            userAttendanceRecordDetailsActivityTextViewClockInTimeValue = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockInTimeValue);
+            String dateClockOutTime = selectedRecord.getDateClockInTime();
+            userAttendanceRecordDetailsActivityTextViewClockInTimeValue.setText(dateClockOutTime);
+
+            userAttendanceRecordDetailsActivityTextViewClockInStatusValue = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockInStatusValue);
+            String clockOutStatus = selectedRecord.getClockInStatus();
+            userAttendanceRecordDetailsActivityTextViewClockInStatusValue.setText(clockOutStatus);
         }
     }
 }

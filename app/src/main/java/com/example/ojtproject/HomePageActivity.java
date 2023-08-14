@@ -92,12 +92,6 @@ public class HomePageActivity extends AppCompatActivity {
                     String currentClockInTime = homePageActivityTextClockActualClock.getText().toString();
                     String currentClockInDate = homePageActivityTextClockActualDate.getText().toString();
 
-                    // Get the current date and time of the when the clock-in button was last tapped to determine if user is absent because of forgetting to tap the button for example
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("lastTappedClockInDate", currentClockInDate);
-                    editor.putString("lastTappedClockInTime", currentClockInTime);
-                    editor.apply();
-
                     databaseReference.orderByChild("dateDay").equalTo(currentClockInDate).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -113,6 +107,12 @@ public class HomePageActivity extends AppCompatActivity {
                                     Date dateClockInTime = inputFormat.parse(currentClockInTime);
                                     String militaryTimeFormat = outputFormat.format(dateClockInTime);
 
+                                    // Get the current date and time of the when the clock-in button was last tapped to determine if user is absent because of forgetting to tap the button for example
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("lastTappedClockInDate", currentClockInDate);
+                                    editor.putString("lastTappedClockInTime", militaryTimeFormat);
+                                    editor.apply();
+
                                     readWriteUserTimeDetails = new ReadWriteUserTimeDetails();
                                     readWriteUserTimeDetails.setDateClockInTime(currentClockInTime);
                                     readWriteUserTimeDetails.setDateDay(currentClockInDate);
@@ -123,10 +123,6 @@ public class HomePageActivity extends AppCompatActivity {
                                     int currentClockInMinute = Integer.parseInt(currentClockInTimeParts[1]);
                                     int currentClockInSecond = Integer.parseInt(currentClockInTimeParts[2]);
 
-                                    currentClockInHour = 9;
-                                    currentClockInMinute = 45;
-                                    currentClockInSecond = 00;
-
                                     //Extract the day of the week from currentDate
                                     String[] currentClockInDateParts = currentClockInDate.split(",");
                                     String currentClockInDayOfWeek = currentClockInDateParts[0];
@@ -135,7 +131,7 @@ public class HomePageActivity extends AppCompatActivity {
 
                                     String clockInStatus;
                                     //Exclude weekends from schedule
-                                    if (!currentClockInDayOfWeek.equals("Saturday") && currentClockInDayOfWeek.equals("Sunday")) {
+                                    if (!currentClockInDayOfWeek.equals("Saturday") && !currentClockInDayOfWeek.equals("Sunday")) {
                                         //Exclude 9:30:01 AM onwards from attendance windows AlarmReceiver class will set the status instead
                                         if (currentClockInHour > 9 || (currentClockInHour == 9 && currentClockInMinute > 45) || (currentClockInHour == 9 && currentClockInMinute == 45 && currentClockInSecond > 0)) {
                                             Toast.makeText(HomePageActivity.this, "Attendance not yet available. Please wait until the designated until ", Toast.LENGTH_SHORT).show();
@@ -145,8 +141,9 @@ public class HomePageActivity extends AppCompatActivity {
                                             clockInStatus = "Absent";
                                             readWriteUserTimeDetails.setClockInStatus(clockInStatus);
                                             // Write the time record to the Firebase Realtime Database under the "attendance" node with the user's UID as the key
-//                                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-//                                            databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
+                                            ReadWriteUserTimeDetails readWriteUserTimeDetailsAbsent = new ReadWriteUserTimeDetails(currentClockInDate, currentClockInTime, clockInStatus, "9:45", "Absent");
+                                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                                            databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetailsAbsent);
                                             Log.d("Military Time", militaryTimeFormat);
                                             Toast.makeText(HomePageActivity.this, "You are marked absent for today!", Toast.LENGTH_SHORT).show();
                                         }
@@ -154,10 +151,6 @@ public class HomePageActivity extends AppCompatActivity {
                                         else if ((currentClockInHour == 9 && currentClockInMinute > 15 && currentClockInMinute < 30) || (currentClockInHour == 9 && currentClockInMinute == 15 && currentClockInSecond > 0) || (currentClockInHour == 9 && currentClockInMinute == 30 && currentClockInSecond == 0)) {
                                             clockInStatus = "Late";
                                             readWriteUserTimeDetails.setClockInStatus(clockInStatus);
-                                            // Write the time record to the Firebase Realtime Database under the "attendance" node with the user's UID as the key
-//                                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-//                                            databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
-                                            ReadWriteUserTimeDetails readWriteUserTimeDetailsAbsent = new ReadWriteUserTimeDetails(currentClockInDate, "9:45", clockInStatus, "9:45", "Absent");
                                             homePageActivityButtonClockInClicked = true;
                                             editor.putString("lastTappedClockInStatus", clockInStatus);
                                             editor.apply();
@@ -168,9 +161,6 @@ public class HomePageActivity extends AppCompatActivity {
                                         else if ((currentClockInHour == 8 && currentClockInMinute >= 45) || (currentClockInHour == 9 && currentClockInMinute < 15) || (currentClockInHour == 9 && currentClockInMinute == 15 && currentClockInSecond == 0)) {
                                             clockInStatus = "On-time";
                                             readWriteUserTimeDetails.setClockInStatus(clockInStatus);
-                                            // Write the time record to the Firebase Realtime Database under the "attendance" node with the user's UID as the key
-//                                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-//                                            databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
                                             homePageActivityButtonClockInClicked = true;
                                             editor.putString("lastTappedClockInStatus", clockInStatus);
                                             editor.apply();
@@ -261,10 +251,6 @@ public class HomePageActivity extends AppCompatActivity {
                                         int currentClockOutMinute = Integer.parseInt(currentClockOutTimeParts[1]);
                                         int currentClockOutSecond = Integer.parseInt(currentClockOutTimeParts[2]);
 
-                                        currentClockOutHour = 18;
-                                        currentClockOutMinute = 0;
-                                        currentClockOutSecond = 0;
-
                                         //Extract the day of the week from currentDate
                                         String[] currentClockOutDateParts = currentClockOutDate.split(",");
                                         String currentClockOutDayOfWeek = currentClockOutDateParts[0];
@@ -273,7 +259,7 @@ public class HomePageActivity extends AppCompatActivity {
 
                                         String clockOutStatus;
                                         //Exclude weekends from schedule
-                                        if (!currentClockOutDayOfWeek.equals("Saturday") && currentClockOutDayOfWeek.equals("Sunday")) {
+                                        if (!currentClockOutDayOfWeek.equals("Saturday") && !currentClockOutDayOfWeek.equals("Sunday")) {
                                             //Exclude 6:30:01 PM onwards from attendance windows AlarmReceiver class will set the status instead
                                             if (currentClockOutHour > 18 || (currentClockOutHour == 18 && currentClockOutMinute > 30) || (currentClockOutHour == 18 && currentClockOutMinute == 30 && currentClockOutSecond > 0)) {
                                                 Toast.makeText(HomePageActivity.this, "Attendance not yet available. Please wait until the designated '\"'on-time'\"' start time of 8:45 AM - 9 to mark your attendance.", Toast.LENGTH_SHORT).show();
@@ -353,9 +339,9 @@ public class HomePageActivity extends AppCompatActivity {
         });
 
         // Calculate the time difference between the current time and the desired trigger time
-        // Trigger at 9:45:00 AM
-        int desiredHour = 23;
-        int desiredMinute = 15;
+        // Trigger at 6:30:00 PM
+        int desiredHour = 18;
+        int desiredMinute = 30;
 
         // Get the current time in the desired timezone
         android.icu.util.Calendar currentTime = android.icu.util.Calendar.getInstance(android.icu.util.TimeZone.getTimeZone("Asia/Singapore"));

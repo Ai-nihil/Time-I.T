@@ -49,6 +49,13 @@
                         android:textStyle="bold"/>
 
                     <TextView
+                        android:id="@+id/listItemTextViewDateTimeClockInHyphen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" - "
+                        android:textStyle="bold"/>
+
+                    <TextView
                         android:id="@+id/listItemTextViewDateTimeClockOut"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -68,6 +75,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="On-Time"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/listItemTextViewDateTimeClockOutHyphen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" - "
                         android:textStyle="bold"/>
 
                     <TextView

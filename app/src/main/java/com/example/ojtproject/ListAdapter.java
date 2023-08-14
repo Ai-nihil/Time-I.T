@@ -36,11 +36,15 @@ public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
         TextView listItemTextViewDateDay = convertView.findViewById(R.id.listItemTextViewDateDay);
         TextView listItemTextViewDateTimeClockIn = convertView.findViewById(R.id.listItemTextViewDateTimeClockIn);
         TextView listItemTextViewStatusClockIn = convertView.findViewById(R.id.listItemTextViewStatusClockIn);
+        TextView listItemTextViewDateTimeClockOut = convertView.findViewById(R.id.listItemTextViewDateTimeClockOut);
+        TextView listItemTextViewStatusClockOut = convertView.findViewById(R.id.listItemTextViewStatusClockOut);
 
         //Initialize TextView values of each list item in the list view of UserAttendanceRecordsActivity with data from FireBase
         listItemTextViewDateDay.setText(readWriteUserTimeDetails.getDateDay());
         listItemTextViewDateTimeClockIn.setText(readWriteUserTimeDetails.getDateClockInTime());
         listItemTextViewStatusClockIn.setText(readWriteUserTimeDetails.getClockInStatus());
+        listItemTextViewDateTimeClockOut.setText(readWriteUserTimeDetails.getDateClockOutTime());
+        listItemTextViewStatusClockOut.setText(readWriteUserTimeDetails.getClockOutStatus());
 
         return convertView;
     }
