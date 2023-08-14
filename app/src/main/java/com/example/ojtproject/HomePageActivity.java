@@ -340,7 +340,7 @@ public class HomePageActivity extends AppCompatActivity {
 
         // Calculate the time difference between the current time and the desired trigger time
         // Trigger at 6:30:00 PM
-        int desiredHour = 18;
+        int desiredHour = 6;
         int desiredMinute = 30;
 
         // Get the current time in the desired timezone

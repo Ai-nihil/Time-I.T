@@ -74,6 +74,18 @@ public class UserAttendanceRecordsActivity extends AppCompatActivity {
                     }
 
                     listAdapter.notifyDataSetChanged(); // Notify adapter of data change
+                    binding.userAttendanceRecordsActivityListView.setVisibility(View.VISIBLE);
+                    binding.userAttendanceRecordsActivityTextViewNoRecord.setVisibility(View.GONE);
+
+                    if (listAdapter.getCount() == 0) {
+                        // Handle the case where the ListView is empty
+                        // You can display a message or perform any necessary actions
+                        binding.userAttendanceRecordsActivityListView.setVisibility(View.GONE);
+                        binding.userAttendanceRecordsActivityTextViewNoRecord.setVisibility(View.VISIBLE);
+
+                    }
+
+
                 }
 
                 @Override

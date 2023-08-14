@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,6 +10,17 @@
         android:id="@+id/userAttendanceRecordsActivityListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/list_item"/>
+        tools:listitem="@layout/list_item"
+        android:visibility="visible"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/userAttendanceRecordsActivityTextViewNoRecord"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Clock-In first to populate this record."
+        android:textAlignment="center"
+        android:layout_centerVertical="true"
+        android:textSize="40sp"
+        android:visibility="gone"/>
+
+</RelativeLayout>

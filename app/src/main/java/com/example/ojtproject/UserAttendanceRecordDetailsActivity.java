@@ -14,6 +14,9 @@ public class UserAttendanceRecordDetailsActivity extends AppCompatActivity {
     private TextView userAttendanceRecordDetailsActivityTextViewDayDateValue;
     private TextView userAttendanceRecordDetailsActivityTextViewClockInTimeValue;
     private TextView userAttendanceRecordDetailsActivityTextViewClockInStatusValue;
+    private TextView userAttendanceRecordDetailsActivityTextViewClockOutTimeValue;
+    private TextView userAttendanceRecordDetailsActivityTextViewClockOutStatusValue;
+    private TextView userAttendanceRecordDetailsActivityTextViewStatusCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +42,31 @@ public class UserAttendanceRecordDetailsActivity extends AppCompatActivity {
             String clockInStatus = selectedRecord.getClockInStatus();
             userAttendanceRecordDetailsActivityTextViewClockInStatusValue.setText(clockInStatus);
 
-            userAttendanceRecordDetailsActivityTextViewClockInTimeValue = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockInTimeValue);
-            String dateClockOutTime = selectedRecord.getDateClockInTime();
-            userAttendanceRecordDetailsActivityTextViewClockInTimeValue.setText(dateClockOutTime);
+            userAttendanceRecordDetailsActivityTextViewClockOutTimeValue = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockOutTimeValue);
+            String dateClockOutTime = selectedRecord.getDateClockOutTime();
+            userAttendanceRecordDetailsActivityTextViewClockOutTimeValue.setText(dateClockOutTime);
 
-            userAttendanceRecordDetailsActivityTextViewClockInStatusValue = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockInStatusValue);
-            String clockOutStatus = selectedRecord.getClockInStatus();
-            userAttendanceRecordDetailsActivityTextViewClockInStatusValue.setText(clockOutStatus);
+            userAttendanceRecordDetailsActivityTextViewClockOutStatusValue = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockOutStatusValue);
+            String clockOutStatus = selectedRecord.getClockOutStatus();
+            userAttendanceRecordDetailsActivityTextViewClockOutStatusValue.setText(clockOutStatus);
+
+            userAttendanceRecordDetailsActivityTextViewStatusCode = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewStatusCode);
+            if(clockInStatus.equals("On-time") && clockOutStatus.equals("On-time")){
+                String acronym = "O";
+                userAttendanceRecordDetailsActivityTextViewStatusCode.setText(acronym);
+            } else if(clockInStatus.equals("On-time") && clockOutStatus.equals("Undertime")){
+                String acronym = "OU";
+                userAttendanceRecordDetailsActivityTextViewStatusCode.setText(acronym);
+            } else if(clockInStatus.equals("Late") && clockOutStatus.equals("On-time")){
+                String acronym = "LO";
+                userAttendanceRecordDetailsActivityTextViewStatusCode.setText(acronym);
+            } else if(clockInStatus.equals("Late") && clockOutStatus.equals("Undertime")){
+                String acronym = "LU";
+                userAttendanceRecordDetailsActivityTextViewStatusCode.setText(acronym);
+            } else {
+                String acronym = "A";
+                userAttendanceRecordDetailsActivityTextViewStatusCode.setText(acronym);
+            }
         }
     }
 }
