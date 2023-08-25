@@ -1,26 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/userAttendanceRecordsActivitySwipeRefreshLayout"
+    android:background="@color/light_gray"
     tools:context=".UserAttendanceRecordsActivity">
 
-    <ListView
-        android:id="@+id/userAttendanceRecordsActivityListView"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/list_item"
-        android:visibility="visible"/>
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/userAttendanceRecordsActivityTextViewNoRecord"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Clock-In first to populate this record."
-        android:textAlignment="center"
-        android:layout_centerVertical="true"
-        android:textSize="40sp"
-        android:visibility="gone"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-</RelativeLayout>
+            <SearchView
+                android:id="@+id/userAttendanceRecordsActivitySearchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:queryHint="Search"
+                android:iconifiedByDefault="false"/>
+
+            <ListView
+                android:id="@+id/userAttendanceRecordsActivityListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/list_item"
+                android:visibility="visible"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/userAttendanceRecordsActivityTextViewNoRecord"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Clock-In first to populate this record."
+            android:textAlignment="center"
+            android:layout_centerVertical="true"
+            android:textSize="40sp"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

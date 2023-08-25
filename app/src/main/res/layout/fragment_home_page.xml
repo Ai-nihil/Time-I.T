@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomePageFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/light_gray">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="@drawable/border">
+
+            <TextClock
+                android:id="@+id/homePageFragmentTextClockActualDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="6dp"
+                android:textAlignment="center"
+                android:textColor="#555555"
+                android:textSize="16sp"
+                android:format12Hour="EEEE, MMMM dd, yyyy"
+                android:timeZone="@string/time_zone_singapore"/>
+
+            <TextClock
+                android:id="@+id/homePageFragmentTextClockActualClock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/homePageFragmentTextClockActualDate"
+                android:padding="6dp"
+                android:textAlignment="center"
+                android:textColor="#555555"
+                android:textSize="16sp"
+                android:format12Hour="hh:mm:ss a"
+                android:timeZone="@string/time_zone_singapore"/>
+
+            <Button
+                android:id="@+id/homePageFragmentButtonClockIn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/homePageFragmentTextClockActualClock"
+                android:layout_marginTop="10dp"
+                android:text="Clock-In"
+                android:layout_marginRight="70dp"
+                android:layout_marginLeft="70dp"/>
+
+            <Button
+                android:id="@+id/homePageFragmentButtonClockOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/homePageFragmentButtonClockIn"
+                android:layout_marginTop="10dp"
+                android:text="Clock-Out"
+                android:layout_marginRight="70dp"
+                android:layout_marginLeft="70dp"/>
+
+            <Button
+                android:id="@+id/homePageFragmentButtonViewRecords"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/homePageFragmentButtonClockOut"
+                android:layout_marginTop="10dp"
+                android:text="View Records"
+                android:layout_marginRight="70dp"
+                android:layout_marginLeft="70dp"/>
+
+            <Button
+                android:id="@+id/homePageFragmentButtonLogout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/homePageFragmentButtonViewRecords"
+                android:layout_marginTop="10dp"
+                android:text="Logout"
+                android:layout_marginRight="70dp"
+                android:layout_marginLeft="70dp"
+                android:layout_marginBottom="10dp"/>
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
+</FrameLayout>

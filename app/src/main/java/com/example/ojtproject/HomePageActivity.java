@@ -2,8 +2,10 @@ package com.example.ojtproject;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ParseException;
 import android.os.Build;
@@ -107,12 +109,6 @@ public class HomePageActivity extends AppCompatActivity {
                                     Date dateClockInTime = inputFormat.parse(currentClockInTime);
                                     String militaryTimeFormat = outputFormat.format(dateClockInTime);
 
-                                    // Get the current date and time of the when the clock-in button was last tapped to determine if user is absent because of forgetting to tap the button for example
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("lastTappedClockInDate", currentClockInDate);
-                                    editor.putString("lastTappedClockInTime", militaryTimeFormat);
-                                    editor.apply();
-
                                     readWriteUserTimeDetails = new ReadWriteUserTimeDetails();
                                     readWriteUserTimeDetails.setDateClockInTime(currentClockInTime);
                                     readWriteUserTimeDetails.setDateDay(currentClockInDate);
@@ -152,7 +148,12 @@ public class HomePageActivity extends AppCompatActivity {
                                             clockInStatus = "Late";
                                             readWriteUserTimeDetails.setClockInStatus(clockInStatus);
                                             homePageActivityButtonClockInClicked = true;
+                                            // Get the current date and time of the when the clock-in button was last tapped to determine if user is absent because of forgetting to tap the button for example
+                                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                                            editor.putString("lastTappedClockInDate", currentClockInDate);
+                                            editor.putString("lastTappedClockInTime", militaryTimeFormat);
                                             editor.putString("lastTappedClockInStatus", clockInStatus);
+                                            editor.putBoolean("clockInButtonTapped", true);
                                             editor.apply();
                                             Log.d("Military Time", militaryTimeFormat);
                                             Toast.makeText(HomePageActivity.this, "You are late!", Toast.LENGTH_SHORT).show();
@@ -162,7 +163,12 @@ public class HomePageActivity extends AppCompatActivity {
                                             clockInStatus = "On-time";
                                             readWriteUserTimeDetails.setClockInStatus(clockInStatus);
                                             homePageActivityButtonClockInClicked = true;
+                                            // Get the current date and time of the when the clock-in button was last tapped to determine if user is absent because of forgetting to tap the button for example
+                                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                                            editor.putString("lastTappedClockInDate", currentClockInDate);
+                                            editor.putString("lastTappedClockInTime", militaryTimeFormat);
                                             editor.putString("lastTappedClockInStatus", clockInStatus);
+                                            editor.putBoolean("clockInButtonTapped", true);
                                             editor.apply();
                                             Log.d("Military Time", militaryTimeFormat);
                                             Toast.makeText(HomePageActivity.this, "Congratulations! You made it on time!", Toast.LENGTH_SHORT).show();
@@ -340,7 +346,7 @@ public class HomePageActivity extends AppCompatActivity {
 
         // Calculate the time difference between the current time and the desired trigger time
         // Trigger at 6:30:00 PM
-        int desiredHour = 6;
+        int desiredHour = 18;
         int desiredMinute = 30;
 
         // Get the current time in the desired timezone
@@ -377,4 +383,29 @@ public class HomePageActivity extends AppCompatActivity {
         return triggerTime.getTimeInMillis() - currentTime.getTimeInMillis();
     }
 
+    private BroadcastReceiver updateFlagReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Read the flag value from shared preferences
+            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+            boolean clockInButtonTapped = sharedPreferences.getBoolean("clockInButtonTapped", false);
+
+            // Update your flag variable in HomePageActivity
+            homePageActivityButtonClockInClicked = clockInButtonTapped;
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Register the broadcast receiver
+        registerReceiver(updateFlagReceiver, new IntentFilter("UPDATE_CLOCK_IN_FLAG"));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Unregister the broadcast receiver to avoid memory leaks
+        unregisterReceiver(updateFlagReceiver);
+    }
 }

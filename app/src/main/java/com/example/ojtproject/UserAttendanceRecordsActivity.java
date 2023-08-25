@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.ojtproject.databinding.ActivityMainBinding;
 import com.example.ojtproject.databinding.ActivityUserAttendanceRecordsBinding;
@@ -29,6 +31,8 @@ public class UserAttendanceRecordsActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private List<ReadWriteUserTimeDetails> readWriteUserTimeDetailsList;
     private ListAdapter listAdapter;
+    private SwipeRefreshLayout swipeContainer;
+    private SearchView searchView;
     private @NonNull ActivityUserAttendanceRecordsBinding binding;
 
     @Override
@@ -68,6 +72,7 @@ public class UserAttendanceRecordsActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     readWriteUserTimeDetailsList.clear(); // Clear existing data before populating
 
+                    // Add readWriteUserTimeDetails objects to the List<readWriteUserTimeDetails>
                     for (DataSnapshot recordSnapshot : dataSnapshot.getChildren()) {
                         ReadWriteUserTimeDetails readWriteUserTimeDetails = recordSnapshot.getValue(ReadWriteUserTimeDetails.class);
                         readWriteUserTimeDetailsList.add(readWriteUserTimeDetails);
@@ -100,5 +105,42 @@ public class UserAttendanceRecordsActivity extends AppCompatActivity {
             Intent intent = new Intent(UserAttendanceRecordsActivity.this, LoginActivity.class);
             startActivity(intent);
         }
+
+        swipeToRefresh();
+
+        searchView = binding.userAttendanceRecordsActivitySearchView;
+
+        // Set an OnQueryTextListener for filtering
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                listAdapter.getCustomFilter().filter(newText);
+                return true;
+            }
+        });
     }
+
+    private void swipeToRefresh() {
+        // Look up for the the Swipe Container
+        swipeContainer = binding.userAttendanceRecordsActivitySwipeRefreshLayout;
+
+        //Setup Refresh Listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //Code to refresh goes here. Call swipeContainer.setRefreshing(false) once the refresh is complete.
+                startActivity(getIntent());
+                finish();
+                overridePendingTransition(0, 0);
+                swipeContainer.setRefreshing(false);
+            }
+        });
+    }
+
+
 }

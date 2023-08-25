@@ -5,15 +5,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
+    private List<ReadWriteUserTimeDetails> readWriteUserTimeDetailsList;
+    private List<ReadWriteUserTimeDetails> readWriteUserTimeDetailsListFull; // Add this field
+    private CustomFilter customFilter;
+    private DatabaseReference databaseReference;
+    private FirebaseUser currentUser;
 
     //Constructors for passing either ArrayList or List
     public ListAdapter(Context context, ArrayList<ReadWriteUserTimeDetails> userAttendanceArrayList){
@@ -21,6 +35,8 @@ public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
     }
     public ListAdapter(Context context, List<ReadWriteUserTimeDetails> userAttendanceArrayList){
         super(context, R.layout.list_item, userAttendanceArrayList);
+        this.readWriteUserTimeDetailsList = userAttendanceArrayList;
+        this.readWriteUserTimeDetailsListFull = new ArrayList<>(userAttendanceArrayList); // Initialize the full list
     }
 
     @NonNull
@@ -74,4 +90,42 @@ public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
         return convertView;
     }
 
+    @NonNull
+    public CustomFilter getCustomFilter() {
+        customFilter = new CustomFilter(ListAdapter.this, readWriteUserTimeDetailsList);
+        return customFilter;
+    }
+
+    public void updateData(List<ReadWriteUserTimeDetails> newData) {
+        readWriteUserTimeDetailsList.clear();
+        readWriteUserTimeDetailsList.addAll(newData);
+        notifyDataSetChanged();
+    }
+
+    public void notUpdatedData(){
+        databaseReference = FirebaseDatabase.getInstance().getReference("Attendance");
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String uid = currentUser.getUid();
+            databaseReference.child(uid).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    readWriteUserTimeDetailsList.clear(); // Clear existing data before populating
+
+                    // Add readWriteUserTimeDetails objects to the List<readWriteUserTimeDetails>
+                    for (DataSnapshot recordSnapshot : dataSnapshot.getChildren()) {
+                        ReadWriteUserTimeDetails readWriteUserTimeDetails = recordSnapshot.getValue(ReadWriteUserTimeDetails.class);
+                        readWriteUserTimeDetailsList.add(readWriteUserTimeDetails);
+                    }
+
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+    }
 }
