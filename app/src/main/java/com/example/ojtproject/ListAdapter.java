@@ -128,4 +128,8 @@ public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
             });
         }
     }
+
+    public List<ReadWriteUserTimeDetails> getReadWriteUserTimeDetailsList() {
+        return readWriteUserTimeDetailsList;
+    }
 }

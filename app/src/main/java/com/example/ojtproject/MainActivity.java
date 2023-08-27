@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
         // If logged in, redirect to HomePageActivity
         if (isLoggedIn) {
-            Intent intent = new Intent(MainActivity.this, HomePageActivity.class);
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
             startActivity(intent);
             finish(); // Optional: To prevent the user from coming back to the MainActivity using the back button
         }

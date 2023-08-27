@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="Home"
+        android:id="@+id/bottomNavigationMenuItemHome"
+        android:icon="@drawable/ic_baseline_home_24"/>
+    <item
+        android:title="Attendance Records"
+        android:id="@+id/bottomNavigationMenuItemAttendanceRecords"
+        android:icon="@drawable/ic_baseline_book_24"/>
+    <item
+        android:title="Profile"
+        android:id="@+id/bottomNavigationMenuItemProfile"
+        android:icon="@drawable/ic_baseline_person_24"/>
+</menu>

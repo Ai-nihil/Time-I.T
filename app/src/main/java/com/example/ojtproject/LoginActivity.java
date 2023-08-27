@@ -125,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putBoolean("isLoggedIn", true);
                         editor.apply();
-                        Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     } else {
@@ -185,16 +185,16 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    //check if User is already logged in. In such case, straightaway take the User's profile
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(authProfile.getCurrentUser() != null){
-            Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        } else{
-            Toast.makeText(LoginActivity.this, "You can log in now!", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    //check if User is already logged in. In such case, straightaway take the User's profile
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        if(authProfile.getCurrentUser() != null){
+//            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//            startActivity(intent);
+//        } else{
+//            Toast.makeText(LoginActivity.this, "You can log in now!", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 }
