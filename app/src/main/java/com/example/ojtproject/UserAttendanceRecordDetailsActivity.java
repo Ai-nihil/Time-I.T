@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.ojtproject.databinding.ActivityUserAttendanceRecordDetailsBinding;
-import com.example.ojtproject.databinding.ActivityUserAttendanceRecordsBinding;
 
 public class UserAttendanceRecordDetailsActivity extends AppCompatActivity {
     private ActivityUserAttendanceRecordDetailsBinding binding;

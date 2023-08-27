@@ -23,7 +23,8 @@
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:queryHint="This is the fragment version"
-                    android:iconifiedByDefault="false"/>
+                    android:iconifiedByDefault="false"
+                    android:visibility="visible"/>
 
                 <com.example.ojtproject.CustomSwipeRefreshLayout
                     android:id="@+id/userAttendanceRecordsFragmentCustomSwipeRefreshLayout"

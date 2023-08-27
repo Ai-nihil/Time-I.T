@@ -2,7 +2,6 @@ package com.example.ojtproject;
 
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -11,8 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -20,15 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.ojtproject.databinding.ActivityMainBinding;
-import com.example.ojtproject.databinding.ActivityUserAttendanceRecordDetailsBinding;
-import com.example.ojtproject.databinding.ActivityUserAttendanceRecordsBinding;
-import com.example.ojtproject.databinding.FragmentUserAttendanceRecordsBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -101,16 +93,17 @@ public class UserAttendanceRecordsFragment extends Fragment {
 
                     listAdapter.notifyDataSetChanged();// Notify adapter of data change
                     userAttendanceRecordsFragmentListView.setVisibility(View.VISIBLE);
+                    userAttendanceRecordsFragmentSearchView.setVisibility(View.VISIBLE);
                     userAttendanceRecordsFragmentTextViewNoRecord.setVisibility(View.GONE);
 
                     if (listAdapter.getCount() == 0) {
                         // Handle the case where the ListView is empty
                         // You can display a message or perform any necessary actions
                         userAttendanceRecordsFragmentListView.setVisibility(View.GONE);
+                        userAttendanceRecordsFragmentSearchView.setVisibility(View.GONE);
                         userAttendanceRecordsFragmentTextViewNoRecord.setVisibility(View.VISIBLE);
 
                     }
-                        System.out.println(listAdapter.getReadWriteUserTimeDetailsList().get(3).getDateDay());
 
                 }
 

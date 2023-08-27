@@ -5,7 +5,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
-import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -35,7 +34,11 @@ public class HomeActivity extends AppCompatActivity {
                     loadUserAttendanceRecordsFragment();
                     break;
                 case R.id.bottomNavigationMenuItemProfile:
-
+                    loadUserProfileFragment();
+                    break;
+                default:
+                    loadHomePageFragment();
+                    break;
             }
 
             return true;
@@ -53,6 +56,13 @@ public class HomeActivity extends AppCompatActivity {
         UserAttendanceRecordsFragment userAttendanceRecordsFragment = new UserAttendanceRecordsFragment();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.homeFragmentContainer, userAttendanceRecordsFragment);
+        transaction.commit();
+    }
+
+    private void loadUserProfileFragment() {
+        UserProfileFragment userProfileFragment = new UserProfileFragment();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.homeFragmentContainer, userProfileFragment);
         transaction.commit();
     }
 }
