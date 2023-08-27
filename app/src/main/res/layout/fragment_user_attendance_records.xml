@@ -6,11 +6,7 @@
     android:layout_height="wrap_content"
     tools:context=".UserAttendanceRecordsFragment">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/userAttendanceRecordsFragmentSwipeRefreshLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/light_gray">
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -29,12 +25,18 @@
                     android:queryHint="This is the fragment version"
                     android:iconifiedByDefault="false"/>
 
+                <com.example.ojtproject.CustomSwipeRefreshLayout
+                    android:id="@+id/userAttendanceRecordsFragmentCustomSwipeRefreshLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/light_gray">
                 <ListView
                     android:id="@+id/userAttendanceRecordsFragmentListView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:listitem="@layout/list_item"
                     android:visibility="visible"/>
+                </com.example.ojtproject.CustomSwipeRefreshLayout>
 
             </LinearLayout>
 
@@ -49,6 +51,6 @@
                 android:visibility="gone"/>
 
         </RelativeLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
 </FrameLayout>

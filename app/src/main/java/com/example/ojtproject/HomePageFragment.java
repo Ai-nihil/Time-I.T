@@ -16,6 +16,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import android.widget.Button;
 import android.widget.TextClock;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,6 +52,7 @@ public class HomePageFragment extends Fragment {
     private FirebaseUser currentUser;
     private ReadWriteUserTimeDetails readWriteUserTimeDetails;
     private Boolean homePageFragmentButtonClockInClicked;
+    private FragmentManager fragmentManager;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -342,8 +346,14 @@ public class HomePageFragment extends Fragment {
         homePageFragmentButtonViewRecords.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), UserAttendanceRecordsActivity.class);
-                startActivity(intent); //Opens UserAttendanceRecordsActivity
+                fragmentManager = getActivity().getSupportFragmentManager();
+                UserAttendanceRecordsFragment userAttendanceRecordsFragment = new UserAttendanceRecordsFragment();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.homeFragmentContainer, userAttendanceRecordsFragment);
+                transaction.commit();
+
+                BottomNavigationView homeFragmentBottomNavigationView = getActivity().findViewById(R.id.homeFragmentBottomNavigationView);
+                homeFragmentBottomNavigationView.setSelectedItemId(R.id.bottomNavigationMenuItemAttendanceRecords);
             }
         });
 

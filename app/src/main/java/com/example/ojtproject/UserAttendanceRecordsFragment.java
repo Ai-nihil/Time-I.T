@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -20,6 +21,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.ojtproject.databinding.ActivityMainBinding;
@@ -45,8 +48,9 @@ public class UserAttendanceRecordsFragment extends Fragment {
     private ListAdapter listAdapter;
     private ListView userAttendanceRecordsFragmentListView;
     private TextView userAttendanceRecordsFragmentTextViewNoRecord;
-    private SwipeRefreshLayout userAttendanceRecordsFragmentSwipeRefreshLayout;
+    private CustomSwipeRefreshLayout userAttendanceRecordsFragmentCustomSwipeRefreshLayout;
     private SearchView userAttendanceRecordsFragmentSearchView;
+    private FragmentManager fragmentManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +59,7 @@ public class UserAttendanceRecordsFragment extends Fragment {
 
         userAttendanceRecordsFragmentListView = rootView.findViewById(R.id.userAttendanceRecordsFragmentListView);
         userAttendanceRecordsFragmentTextViewNoRecord = rootView.findViewById(R.id.userAttendanceRecordsFragmentTextViewNoRecord);
-        userAttendanceRecordsFragmentSwipeRefreshLayout = rootView.findViewById(R.id.userAttendanceRecordsFragmentSwipeRefreshLayout);
+        userAttendanceRecordsFragmentCustomSwipeRefreshLayout = rootView.findViewById(R.id.userAttendanceRecordsFragmentCustomSwipeRefreshLayout);
         userAttendanceRecordsFragmentSearchView = rootView.findViewById(R.id.userAttendanceRecordsFragmentSearchView);
 
         // Initialize UI components
@@ -142,6 +146,7 @@ public class UserAttendanceRecordsFragment extends Fragment {
         userAttendanceRecordsFragmentSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                refreshOriginalData();
                 return false;
             }
         });
@@ -178,16 +183,34 @@ public class UserAttendanceRecordsFragment extends Fragment {
 
     private void swipeToRefresh() {
 
+        userAttendanceRecordsFragmentListView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    userAttendanceRecordsFragmentCustomSwipeRefreshLayout.setEnabled(false);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    userAttendanceRecordsFragmentCustomSwipeRefreshLayout.setEnabled(true);
+                }
+                return false;
+            }
+        });
+
         // Look up for the the Swipe Container
         //Setup Refresh Listener which triggers new data loading
-        userAttendanceRecordsFragmentSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        userAttendanceRecordsFragmentCustomSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 //Code to refresh goes here. Call swipeContainer.setRefreshing(false) once the refresh is complete.
-                startActivity(getActivity().getIntent());
-                getActivity().finish();
-                getActivity().overridePendingTransition(0, 0);
-                userAttendanceRecordsFragmentSwipeRefreshLayout.setRefreshing(false);
+//                startActivity(getActivity().getIntent());
+//                getActivity().finish();
+//                getActivity().overridePendingTransition(0, 0);
+//                userAttendanceRecordsFragmentSwipeRefreshLayout.setRefreshing(false);
+
+                fragmentManager = getActivity().getSupportFragmentManager();
+                UserAttendanceRecordsFragment userAttendanceRecordsFragment = new UserAttendanceRecordsFragment();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.homeFragmentContainer, userAttendanceRecordsFragment);
+                transaction.commit();
             }
         });
     }
