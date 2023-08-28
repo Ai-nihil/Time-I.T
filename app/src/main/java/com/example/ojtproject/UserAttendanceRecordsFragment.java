@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.content.Intent;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ public class UserAttendanceRecordsFragment extends Fragment {
     private TextView userAttendanceRecordsFragmentTextViewNoRecord;
     private CustomSwipeRefreshLayout userAttendanceRecordsFragmentCustomSwipeRefreshLayout;
     private SearchView userAttendanceRecordsFragmentSearchView;
+    private ProgressBar userUserAttendanceRecordsFragmentProgressBar;
     private FragmentManager fragmentManager;
 
     @Override
@@ -53,6 +55,7 @@ public class UserAttendanceRecordsFragment extends Fragment {
         userAttendanceRecordsFragmentTextViewNoRecord = rootView.findViewById(R.id.userAttendanceRecordsFragmentTextViewNoRecord);
         userAttendanceRecordsFragmentCustomSwipeRefreshLayout = rootView.findViewById(R.id.userAttendanceRecordsFragmentCustomSwipeRefreshLayout);
         userAttendanceRecordsFragmentSearchView = rootView.findViewById(R.id.userAttendanceRecordsFragmentSearchView);
+        userUserAttendanceRecordsFragmentProgressBar = rootView.findViewById(R.id.userUserAttendanceRecordsFragmentProgressBar);
 
         // Initialize UI components
         readWriteUserTimeDetailsList = new ArrayList<>();
@@ -78,6 +81,7 @@ public class UserAttendanceRecordsFragment extends Fragment {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (currentUser != null) {
+            userUserAttendanceRecordsFragmentProgressBar.setVisibility(View.VISIBLE);
             String uid = currentUser.getUid();
             // Fetch attendance records from Firebase and populate the attendanceList
             databaseReference.child(uid).addValueEventListener(new ValueEventListener() {
@@ -104,7 +108,7 @@ public class UserAttendanceRecordsFragment extends Fragment {
                         userAttendanceRecordsFragmentTextViewNoRecord.setVisibility(View.VISIBLE);
 
                     }
-
+                    userUserAttendanceRecordsFragmentProgressBar.setVisibility(View.GONE);
                 }
 
                 @Override

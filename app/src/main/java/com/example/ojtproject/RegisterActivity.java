@@ -121,8 +121,8 @@ public class RegisterActivity extends AppCompatActivity {
                     registerActivityEditTextBirthdate.requestFocus();
                 } else if(registerActivityRadioGroupGender.getCheckedRadioButtonId() == -1){
                     Toast.makeText(RegisterActivity.this,"Please select your gender", Toast.LENGTH_LONG).show();
-                    registerActivityEditTextEmail.setError("Gender is required");
-                    registerActivityEditTextEmail.requestFocus();
+                    registerActivityRadioButtonGenderSelected.setError("Gender is required");
+                    registerActivityRadioButtonGenderSelected.requestFocus();
                 } else if(TextUtils.isEmpty(textMobileNumber)) {
                     Toast.makeText(RegisterActivity.this, "Please enter your mobile number", Toast.LENGTH_LONG).show();
                     registerActivityEditTextMobileNumber.setError("Mobile Number is required");

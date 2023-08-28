@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -11,6 +12,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class HomeActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager;
+    private int fragmentToLoad;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,6 +22,19 @@ public class HomeActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             loadHomePageFragment(); // Load the initial fragment
+        }
+
+        // Retrieve updated profile data from intent
+        Intent intent = getIntent();
+        if (intent != null) {
+            fragmentToLoad = intent.getIntExtra("loadFragment", 0);
+            if (fragmentToLoad == 1) { // Replace with fragment identifier
+                fragmentToLoad = 0;
+                // Programmatically select the bottom navigation menu item
+                BottomNavigationView homeFragmentBottomNavigationView = findViewById(R.id.homeFragmentBottomNavigationView);
+                homeFragmentBottomNavigationView.setSelectedItemId(R.id.bottomNavigationMenuItemProfile);
+                loadUserProfileFragment(); // Custom method to load the fragment
+            }
         }
 
         BottomNavigationView homeFragmentBottomNavigationView = findViewById(R.id.homeFragmentBottomNavigationView);

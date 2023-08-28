@@ -7,10 +7,15 @@
     tools:context=".UserAttendanceRecordsFragment">
 
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <com.example.ojtproject.CustomSwipeRefreshLayout
+            android:id="@+id/userAttendanceRecordsFragmentCustomSwipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -22,36 +27,41 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:queryHint="This is the fragment version"
                     android:iconifiedByDefault="false"
-                    android:visibility="visible"/>
+                    android:queryHint="This is the fragment version"
+                    android:visibility="visible" />
 
-                <com.example.ojtproject.CustomSwipeRefreshLayout
-                    android:id="@+id/userAttendanceRecordsFragmentCustomSwipeRefreshLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/light_gray">
+
                 <ListView
                     android:id="@+id/userAttendanceRecordsFragmentListView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:listitem="@layout/list_item"
-                    android:visibility="visible"/>
-                </com.example.ojtproject.CustomSwipeRefreshLayout>
+                    android:visibility="visible"
+                    tools:listitem="@layout/list_item" />
+
 
             </LinearLayout>
+        </com.example.ojtproject.CustomSwipeRefreshLayout>
 
-            <TextView
-                android:id="@+id/userAttendanceRecordsFragmentTextViewNoRecord"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Clock-In first to populate this record."
-                android:textAlignment="center"
-                android:layout_centerVertical="true"
-                android:textSize="40sp"
-                android:visibility="gone"/>
+        <TextView
+            android:id="@+id/userAttendanceRecordsFragmentTextViewNoRecord"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="Clock-In first to populate this record."
+            android:textAlignment="center"
+            android:textSize="40sp"
+            android:visibility="gone" />
 
-        </RelativeLayout>
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/userUserAttendanceRecordsFragmentProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:elevation="10dp"
+        android:visibility="gone" />
 
 
 </FrameLayout>

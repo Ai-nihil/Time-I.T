@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.ojtproject.databinding.ActivityUserAttendanceRecordDetailsBinding;
@@ -16,6 +18,7 @@ public class UserAttendanceRecordDetailsActivity extends AppCompatActivity {
     private TextView userAttendanceRecordDetailsActivityTextViewClockOutTimeValue;
     private TextView userAttendanceRecordDetailsActivityTextViewClockOutStatusValue;
     private TextView userAttendanceRecordDetailsActivityTextViewStatusCode;
+    private ProgressBar userAttendanceRecordDetailsActivityProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +27,11 @@ public class UserAttendanceRecordDetailsActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         Intent intent = this.getIntent();
+        userAttendanceRecordDetailsActivityProgressBar = findViewById(R.id.userAttendanceRecordDetailsActivityProgressBar);
 
         //Initialize TextView values with data from UserAttendanceRecordsActivity
         if (intent != null) {
+            userAttendanceRecordDetailsActivityProgressBar.setVisibility(View.VISIBLE);
             ReadWriteUserTimeDetails selectedRecord = (ReadWriteUserTimeDetails) intent.getParcelableExtra("selectedRecord");
 
             userAttendanceRecordDetailsActivityTextViewDayDateValue = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewDayDateValue);
@@ -66,6 +71,7 @@ public class UserAttendanceRecordDetailsActivity extends AppCompatActivity {
                 String acronym = "A";
                 userAttendanceRecordDetailsActivityTextViewStatusCode.setText(acronym);
             }
+            userAttendanceRecordDetailsActivityProgressBar.setVisibility(View.GONE);
         }
     }
 }

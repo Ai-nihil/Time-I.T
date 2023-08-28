@@ -12,13 +12,6 @@ import android.content.SharedPreferences;
 import android.net.ParseException;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +19,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextClock;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -138,7 +137,7 @@ public class HomePageFragment extends Fragment {
                                     if (!currentClockInDayOfWeek.equals("Saturday") && !currentClockInDayOfWeek.equals("Sunday")) {
                                         //Exclude 9:30:01 AM onwards from attendance windows AlarmReceiver class will set the status instead
                                         if (currentClockInHour > 9 || (currentClockInHour == 9 && currentClockInMinute > 45) || (currentClockInHour == 9 && currentClockInMinute == 45 && currentClockInSecond > 0)) {
-                                            Toast.makeText(getActivity(), "Attendance not yet available. Please wait until the designated until ", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(), "Attendance not yet available. Please wait until the designated time.", Toast.LENGTH_SHORT).show();
                                         }
                                         //Employee absent during the 9:30:01-9:45:00 AM
                                         else if ((currentClockInHour == 9 && currentClockInMinute > 30 && currentClockInMinute < 45) || (currentClockInHour == 9 && currentClockInMinute == 30 && currentClockInSecond > 0) || (currentClockInHour == 9 && currentClockInMinute == 45 && currentClockInSecond == 0)) {
@@ -225,7 +224,7 @@ public class HomePageFragment extends Fragment {
                 currentUser = authProfile.getCurrentUser();
 
                 //Check if there is a user logged-in
-                if(homePageFragmentButtonClockInClicked == true){
+                if (homePageFragmentButtonClockInClicked == true) {
                     if (currentUser != null) {
                         String uid = currentUser.getUid();
 
@@ -335,7 +334,7 @@ public class HomePageFragment extends Fragment {
                     }
                 }
                 //User must have a clock-in status of either on-time or late to use the clock-out button
-                else{
+                else {
                     Toast.makeText(getActivity(), "Please, check if you successfully clocked-in first before clocking-out!", Toast.LENGTH_LONG).show();
                 }
             }
@@ -371,7 +370,7 @@ public class HomePageFragment extends Fragment {
         setupAlarm(timeDifferenceMillis);
 
         // Inflate the layout for this fragment
-            return rootView;
+        return rootView;
     }
 
     //setupAlarm() method logic starts here

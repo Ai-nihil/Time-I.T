@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.ojtproject.CustomSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/userProfileFragmentCustomSwipeRefreshLayout"
     android:background="@color/light_gray"
     tools:context=".UserProfileFragment">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <FrameLayout
         android:id="@+id/homeFragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <!-- TODO: Update blank fragment layout -->
+
         <LinearLayout
+            android:id="@+id/userProfileFragmentLinearLayoutCustomSwipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -26,7 +31,8 @@
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_centerInParent="true"
-                    android:background="@drawable/ic_baseline_person_off_24" />
+                    android:background="@drawable/ic_baseline_person_off_24"
+                    android:scaleType="centerCrop" />
 
                 <TextView
                     android:id="@+id/userProfileFragmentTextViewWelcomeMessage"
@@ -54,12 +60,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+
                     <TextView
                         android:id="@+id/userProfileFragmentTextViewNameLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Name"
                         android:textSize="18sp" />
+
 
                     <TextView
                         android:id="@+id/userProfileFragmentTextViewName"
@@ -164,6 +172,7 @@
                         android:layout_marginTop="10dp"
                         android:hint="Loading"
                         android:textSize="18sp" />
+
                 </LinearLayout>
 
                 <View
@@ -196,18 +205,30 @@
                         android:layout_marginTop="10dp"
                         android:hint="Loading"
                         android:textSize="18sp" />
+
+                    <Button
+                        android:id="@+id/userProfileFragmentButtonEditInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="70dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="70dp"
+                        android:text="Edit Info" />
+
                 </LinearLayout>
 
             </RelativeLayout>
 
         </LinearLayout>
+
         <ProgressBar
             android:id="@+id/userProfileFragmentProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="10dp"
             android:layout_gravity="center"
+            android:elevation="10dp"
             android:visibility="gone" />
 
     </FrameLayout>
-</ScrollView>
+    </ScrollView>
+</com.example.ojtproject.CustomSwipeRefreshLayout>

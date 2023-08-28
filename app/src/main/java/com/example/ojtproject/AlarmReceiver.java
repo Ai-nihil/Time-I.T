@@ -42,84 +42,105 @@ public class AlarmReceiver extends BroadcastReceiver {
         dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
         String currentDate = dateFormat.format(currentCalendar.getTime());
 
+        String[] currentDateParts = currentDate.split(",");
+        String currentDayOfWeek = currentDateParts[0];
+
+        currentCalendar = Calendar.getInstance();
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        dateTimeFormat.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
+        String currentTime = dateTimeFormat.format(currentCalendar.getTime());
+
+        String[] currentTimeParts = currentTime.split(":");
+        int currentHour = Integer.parseInt(currentTimeParts[0]);
+        int currentMinute = Integer.parseInt(currentTimeParts[1]);
+        int currentSecond = Integer.parseInt(currentTimeParts[2]);
+
         System.out.println(storedClockInDate);
         System.out.println(storedClockInTime);
 
 
         // Check if the user tapped the button for today
-        if (!storedClockInDate.equals(currentDate)) {
-            // Update status to "Absent" for today
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (!currentDayOfWeek.equals("Saturday") && !currentDayOfWeek.equals("Sunday")) {
+            if (currentHour >= 18 && currentMinute >= 30) {
+                if (!storedClockInDate.equals(currentDate)) {
+                    // Update status to "Absent" for today
+                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-            if (currentUser != null) {
-                String uid = currentUser.getUid();
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                    if (currentUser != null) {
+                        String uid = currentUser.getUid();
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-                DatabaseReference userAttendanceRef = databaseReference.child("Attendance").child(uid);
+                        DatabaseReference userAttendanceRef = databaseReference.child("Attendance").child(uid);
 
-                userAttendanceRef.orderByChild("dateDay").equalTo(currentDate).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.exists()) {
-                            // Update the status to "Absent"
-                            ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails(currentDate, "9:45:00 AM", "Absent", "9:45:00 AM", "Absent");
-                            userAttendanceRef.push().setValue(readWriteUserTimeDetails);
-                        }
+                        userAttendanceRef.orderByChild("dateDay").equalTo(currentDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (!dataSnapshot.exists()) {
+                                    // Update the status to "Absent"
+                                    ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails(currentDate, "9:45:00 AM", "Absent", "9:45:00 AM", "Absent");
+                                    userAttendanceRef.push().setValue(readWriteUserTimeDetails);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                // Handle error
+                            }
+                        });
+
                     }
+                } else {
+                    // Update clock-out status to "On-time" for today
+                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        // Handle error
+                    if (currentUser != null) {
+                        String uid = currentUser.getUid();
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+                        DatabaseReference userAttendanceRef = databaseReference.child("Attendance").child(uid);
+
+                        userAttendanceRef.orderByChild("dateDay").equalTo(currentDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (!dataSnapshot.exists()) {
+                                    SimpleDateFormat inputFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                                    SimpleDateFormat outputFormat = new SimpleDateFormat("hh:mm:ss a", Locale.getDefault());
+
+                                    //Turn the clock-in time from military time to nonmilitary time format
+                                    Date dateClockInTime = null;
+                                    try {
+                                        dateClockInTime = inputFormat.parse(storedClockInTime);
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    String amPmTimeFormat = outputFormat.format(dateClockInTime);
+
+                                    // Update the clock-out status to "On-Time"
+                                    ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails(currentDate, amPmTimeFormat, storedClockInStatus, "5:59:59 PM", "Undertime");
+                                    userAttendanceRef.push().setValue(readWriteUserTimeDetails);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    // Set the flag value to false
+                                    editor.putBoolean("clockInButtonTapped", false);
+                                    editor.apply();
+                                    // Send a broadcast to indicate that the flag should be updated
+                                    Intent updateFlagIntent = new Intent("UPDATE_CLOCK_IN_FLAG");
+                                    context.sendBroadcast(updateFlagIntent);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                // Handle error
+                            }
+                        });
                     }
-                });
-
+                }
+            } else {
+                System.out.println("It's not yet time to check if user is absent for the weekday!");
             }
         } else {
-            // Update clock-out status to "On-time" for today
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-            if (currentUser != null) {
-                String uid = currentUser.getUid();
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
-                DatabaseReference userAttendanceRef = databaseReference.child("Attendance").child(uid);
-
-                userAttendanceRef.orderByChild("dateDay").equalTo(currentDate).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.exists()) {
-                            SimpleDateFormat inputFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-                            SimpleDateFormat outputFormat = new SimpleDateFormat("hh:mm:ss a", Locale.getDefault());
-
-                            //Turn the clock-in time from military time to nonmilitary time format
-                            Date dateClockInTime = null;
-                            try {
-                                dateClockInTime = inputFormat.parse(storedClockInTime);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            String amPmTimeFormat = outputFormat.format(dateClockInTime);
-
-                            // Update the clock-out status to "On-Time"
-                            ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails(currentDate, amPmTimeFormat, storedClockInStatus, "5:59:59 PM", "Undertime");
-                            userAttendanceRef.push().setValue(readWriteUserTimeDetails);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            // Set the flag value to false
-                            editor.putBoolean("clockInButtonTapped", false);
-                            editor.apply();
-                            // Send a broadcast to indicate that the flag should be updated
-                            Intent updateFlagIntent = new Intent("UPDATE_CLOCK_IN_FLAG");
-                            context.sendBroadcast(updateFlagIntent);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        // Handle error
-                    }
-                });
-            }
-
+            System.out.println("It's the weekends!");
         }
     }
+
 }
