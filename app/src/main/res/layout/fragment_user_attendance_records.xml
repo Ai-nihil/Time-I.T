@@ -31,7 +31,6 @@
                     android:queryHint="This is the fragment version"
                     android:visibility="visible" />
 
-
                 <ListView
                     android:id="@+id/userAttendanceRecordsFragmentListView"
                     android:layout_width="match_parent"
@@ -39,15 +38,22 @@
                     android:visibility="visible"
                     tools:listitem="@layout/list_item" />
 
-                <TextView
-                    android:id="@+id/userAttendanceRecordsFragmentTextViewNoMatches"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Sorry, there are no matches of this record."
-                    android:textAlignment="center"
-                    android:textSize="40sp"
-                    android:visibility="gone"/>
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true">
 
+                    <TextView
+                        android:id="@+id/userAttendanceRecordsFragmentTextViewNoMatches"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Sorry, there are no matches of this record."
+                        android:textAlignment="center"
+                        android:textSize="40sp"
+                        android:visibility="gone" /> <!-- Centered within the gray part -->
+
+                </FrameLayout>
 
             </LinearLayout>
         </com.example.ojtproject.CustomSwipeRefreshLayout>
