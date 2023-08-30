@@ -1,11 +1,11 @@
 package com.example.ojtproject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Filter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,15 +28,17 @@ public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
     private CustomFilter customFilter;
     private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
+    private CustomFilterListener customFilterListener;
 
     //Constructors for passing either ArrayList or List
     public ListAdapter(Context context, ArrayList<ReadWriteUserTimeDetails> userAttendanceArrayList){
         super(context, R.layout.list_item, userAttendanceArrayList);
     }
-    public ListAdapter(Context context, List<ReadWriteUserTimeDetails> userAttendanceArrayList){
+    public ListAdapter(Context context, List<ReadWriteUserTimeDetails> userAttendanceArrayList, CustomFilterListener customFilterListener){
         super(context, R.layout.list_item, userAttendanceArrayList);
         this.readWriteUserTimeDetailsList = userAttendanceArrayList;
         this.readWriteUserTimeDetailsListFull = new ArrayList<>(userAttendanceArrayList); // Initialize the full list
+        this.customFilterListener = customFilterListener;
     }
 
     @NonNull
@@ -92,7 +94,7 @@ public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
 
     @NonNull
     public CustomFilter getCustomFilter() {
-        customFilter = new CustomFilter(ListAdapter.this, readWriteUserTimeDetailsList);
+        customFilter = new CustomFilter(ListAdapter.this, readWriteUserTimeDetailsList, customFilterListener);
         return customFilter;
     }
 

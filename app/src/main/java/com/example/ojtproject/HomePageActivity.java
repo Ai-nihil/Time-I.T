@@ -336,13 +336,13 @@ public class HomePageActivity extends AppCompatActivity {
 
         //View Records logic starts here
         homePageActivityButtonViewRecords = findViewById(R.id.homePageActivityButtonViewRecords);
-        homePageActivityButtonViewRecords.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomePageActivity.this, UserAttendanceRecordsActivity.class);
-                startActivity(intent); //Opens UserAttendanceRecordsActivity
-            }
-        });
+//        homePageActivityButtonViewRecords.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(HomePageActivity.this, UserAttendanceRecordsActivity.class);
+//                startActivity(intent); //Opens UserAttendanceRecordsActivity
+//            }
+//        });
 
         // Calculate the time difference between the current time and the desired trigger time
         // Trigger at 6:30:00 PM

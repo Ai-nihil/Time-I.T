@@ -40,11 +40,12 @@ public class UserAttendanceRecordsFragment extends Fragment {
     private List<ReadWriteUserTimeDetails> readWriteUserTimeDetailsList;
     private ListAdapter listAdapter;
     private ListView userAttendanceRecordsFragmentListView;
-    private TextView userAttendanceRecordsFragmentTextViewNoRecord;
+    private TextView userAttendanceRecordsFragmentTextViewNoRecord, userAttendanceRecordsFragmentTextViewNoMatches;
     private CustomSwipeRefreshLayout userAttendanceRecordsFragmentCustomSwipeRefreshLayout;
     private SearchView userAttendanceRecordsFragmentSearchView;
     private ProgressBar userUserAttendanceRecordsFragmentProgressBar;
     private FragmentManager fragmentManager;
+    private CustomFilterListener customFilterListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,6 +54,7 @@ public class UserAttendanceRecordsFragment extends Fragment {
 
         userAttendanceRecordsFragmentListView = rootView.findViewById(R.id.userAttendanceRecordsFragmentListView);
         userAttendanceRecordsFragmentTextViewNoRecord = rootView.findViewById(R.id.userAttendanceRecordsFragmentTextViewNoRecord);
+        userAttendanceRecordsFragmentTextViewNoMatches = rootView.findViewById(R.id.userAttendanceRecordsFragmentTextViewNoMatches);
         userAttendanceRecordsFragmentCustomSwipeRefreshLayout = rootView.findViewById(R.id.userAttendanceRecordsFragmentCustomSwipeRefreshLayout);
         userAttendanceRecordsFragmentSearchView = rootView.findViewById(R.id.userAttendanceRecordsFragmentSearchView);
         userUserAttendanceRecordsFragmentProgressBar = rootView.findViewById(R.id.userUserAttendanceRecordsFragmentProgressBar);
@@ -61,7 +63,21 @@ public class UserAttendanceRecordsFragment extends Fragment {
         readWriteUserTimeDetailsList = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference("Attendance");
 
-        listAdapter = new ListAdapter(getActivity(), readWriteUserTimeDetailsList);
+        customFilterListener = new CustomFilterListener() {
+            @Override
+            public void onFilterResults(boolean hasMatches) {
+                if (hasMatches == true) {
+                    // There are matches, update the UI accordingly
+                    // For example, hide the "No matches found" TextView and show the ListView
+                    userAttendanceRecordsFragmentListView.setVisibility(View.VISIBLE);
+                    userAttendanceRecordsFragmentTextViewNoMatches.setVisibility(View.GONE);
+                } else {
+                    userAttendanceRecordsFragmentListView.setVisibility(View.GONE);
+                    userAttendanceRecordsFragmentTextViewNoMatches.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+        listAdapter = new ListAdapter(getActivity(), readWriteUserTimeDetailsList, customFilterListener);
 
         userAttendanceRecordsFragmentListView.setAdapter(listAdapter);
         userAttendanceRecordsFragmentListView.setClickable(true);
@@ -144,7 +160,9 @@ public class UserAttendanceRecordsFragment extends Fragment {
             @Override
             public boolean onClose() {
                 refreshOriginalData();
-                return false;
+                userAttendanceRecordsFragmentListView.setVisibility(View.VISIBLE);
+                userAttendanceRecordsFragmentTextViewNoMatches.setVisibility(View.GONE);
+                return true;
             }
         });
 //      Inflate the layout for this fragment

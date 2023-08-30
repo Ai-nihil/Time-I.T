@@ -1,6 +1,10 @@
 package com.example.ojtproject;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.widget.Filter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +13,15 @@ public class CustomFilter extends Filter {
     private final List<ReadWriteUserTimeDetails> toBeModifiedList;
     private final List<ReadWriteUserTimeDetails> originalList;
     private final ListAdapter adapter;
+    private CustomFilterListener customFilterListener;
+    private Boolean hasMatches;
 
-    public CustomFilter(ListAdapter adapter, List<ReadWriteUserTimeDetails> originalList) {
+    public CustomFilter(ListAdapter adapter, List<ReadWriteUserTimeDetails> originalList, CustomFilterListener customFilterListener) {
         this.adapter = adapter;
         this.toBeModifiedList = new ArrayList<>(originalList); // Create a copy of the original list
         this.originalList = new ArrayList<>(originalList);
+        this.customFilterListener = customFilterListener;
+        this.hasMatches = false;
     }
 
     @Override
@@ -43,11 +51,20 @@ public class CustomFilter extends Filter {
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results) {
         List<ReadWriteUserTimeDetails> filteredList = (List<ReadWriteUserTimeDetails>) results.values;
+        int filteredListCount = (Integer) results.count;
 
         // Notify the adapter about the new filtered list
-        if (filteredList != null) {
+        if ((constraint == null && constraint.length() == 0) && filteredListCount == 0) {
+            hasMatches = true;
+            adapter.notUpdatedData();
+        } else if ((constraint != null && constraint.length() != 0) && filteredListCount == 0) {
+            hasMatches = false;
+        } else {
+            hasMatches = true;
             adapter.updateData(filteredList);
         }
+        // Update the filter listener based on whether there are matches
+        customFilterListener.onFilterResults(hasMatches);
     }
 
     private boolean matchesFilter(ReadWriteUserTimeDetails item, String filterPattern) {

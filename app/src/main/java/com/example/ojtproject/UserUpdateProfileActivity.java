@@ -5,9 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -103,11 +107,12 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
             }
         });
 
+        //Create new password
         Button userUpdateProfileActivityButtonUploadChangePassword = findViewById(R.id.userUpdateProfileActivityButtonUploadChangePassword);
         userUpdateProfileActivityButtonUploadChangePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(UserUpdateProfileActivity.this, ForgotPasswordActivity.class);
+                Intent intent = new Intent(UserUpdateProfileActivity.this, ChangePasswordActivity.class);
                 startActivity(intent);
             }
         });
@@ -226,5 +231,59 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
                 userUpdateProfileActivityProgressBar.setVisibility(View.GONE);
             }
         });
+    }
+
+    //Creating ActionBar Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //Inflate menu items
+        getMenuInflater().inflate(R.menu.common_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    //When any menu item is selected
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        switch (item.getItemId()){
+
+            case R.id.commonMenuItemContactAdmin:
+                openEmailAppChooser();
+                break;
+            case R.id.commonMenuItemLogout:
+                authProfile = FirebaseAuth.getInstance();
+                SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("isLoggedIn", false);//So when phone is opened, user will be redirected to the MainFragment instead of HomePageActivity
+                editor.apply();
+                Intent intent = new Intent(UserUpdateProfileActivity.this, MainActivity.class);
+
+                //Don't let user go back to HomePageActivity or any activities related opened after logout button was tapped if back button of phone is tapped
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                authProfile.signOut();
+                break;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void openEmailAppChooser() {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setData(Uri.parse("mailto:")); // Only email apps should handle this
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"borjy46@gmail.com"}); // Replace with admin's email address
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Contact Admin");
+
+        // Check if there's an app that can handle the email intent
+        if (emailIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(Intent.createChooser(emailIntent, "Choose an email client:"));
+        } else {
+            // If no email app is available, open browser to Gmail website
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://mail.google.com/"));
+            startActivity(browserIntent);
+        }
     }
 }
