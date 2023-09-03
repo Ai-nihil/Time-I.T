@@ -36,6 +36,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Locale;
+import java.util.Objects;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText loginActivityEditTextEmail,loginActivityEditTextPassword;
@@ -43,7 +46,6 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth authProfile;
     private FirebaseDatabase database;
     private static final String TAG = "LoginActivity";
-    private boolean isAdmin = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,19 +129,44 @@ public class LoginActivity extends AppCompatActivity {
                     //Get instance of the current User
                     FirebaseUser firebaseUser = authProfile.getCurrentUser();
                     String userId = firebaseUser.getUid();
+
+                    //Check if email is verified before user can access their profile
+                    if(firebaseUser.isEmailVerified()){
+                        Toast.makeText(LoginActivity.this, "You are logged in now", Toast.LENGTH_SHORT).show();
+                        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("isLoggedIn", true);
+                        editor.apply();
+                    } else {
+                        firebaseUser.sendEmailVerification();
+                        authProfile.signOut(); //Sign out user
+                        showAlertDialog();
+                    }
+
                     if (firebaseUser != null) {
                         DatabaseReference userRef = database.getReference().child("Registered Users").child(userId);
                         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.exists()) {
+                                    Intent intent;
                                     String userType = snapshot.child("userType").getValue(String.class);
-                                    if (userType != null && (userType.equals("admin") || userType.equals("user"))) {
-                                        if (userType.equals("admin")) {
-                                            isAdmin = true;
-                                        } else {
-                                            isAdmin = false;
-                                        }
+                                    assert userType != null;
+                                    // Identifies if the person loggin in is an admin or a user
+                                    switch (userType.toString().toLowerCase(Locale.ROOT)) {
+                                        case "admin":
+                                            intent = new Intent(LoginActivity.this, AdminView.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                            break;
+                                        case "user":
+                                            intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                            break;
+                                        default:
+                                            Toast.makeText(LoginActivity.this, userType, Toast.LENGTH_SHORT).show();
+                                            break;
                                     }
                                 }
                             }
@@ -152,27 +179,6 @@ public class LoginActivity extends AppCompatActivity {
                         });
                     }
 
-                    //Check if email is verified before user can access their profile
-                    if(firebaseUser.isEmailVerified()){
-                        Toast.makeText(LoginActivity.this, "You are logged in now", Toast.LENGTH_SHORT).show();
-                        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean("isLoggedIn", true);
-                        editor.apply();
-                        Intent intent;
-                        if (isAdmin) {
-                            intent = new Intent(LoginActivity.this, HomeActivity.class);
-                        } else {
-                            intent = new Intent(LoginActivity.this, HomeActivity.class);
-                        }
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-
-                    } else {
-                        firebaseUser.sendEmailVerification();
-                        authProfile.signOut(); //Sign out user
-                        showAlertDialog();
-                    }
                 } else {
                     try {
                         throw task.getException();
