@@ -36,6 +36,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         String storedClockInDate = sharedPreferences.getString("lastTappedClockInDate", "");
         String storedClockInTime = sharedPreferences.getString("lastTappedClockInTime", "");
         String storedClockInStatus = sharedPreferences.getString("lastTappedClockInStatus", "");
+        Boolean storedClockInButtonTapped = sharedPreferences.getBoolean("clockInButtonTapped", false);
 
         Calendar currentCalendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.getDefault());
@@ -62,7 +63,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         // Check if the user tapped the button for today
         if (!currentDayOfWeek.equals("Saturday") && !currentDayOfWeek.equals("Sunday")) {
             if (currentHour >= 18 && currentMinute >= 30) {
-                if (!storedClockInDate.equals(currentDate)) {
+                if (storedClockInButtonTapped == false) {
                     // Update status to "Absent" for today
                     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -135,6 +136,9 @@ public class AlarmReceiver extends BroadcastReceiver {
                         });
                     }
                 }
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("clockInButtonTapped", false);
+                editor.apply();
             } else {
                 System.out.println("It's not yet time to check if user is absent for the weekday!");
             }

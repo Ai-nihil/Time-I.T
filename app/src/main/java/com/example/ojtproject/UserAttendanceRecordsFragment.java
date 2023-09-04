@@ -89,6 +89,7 @@ public class UserAttendanceRecordsFragment extends Fragment {
                 // Create an Intent to start the new activity
                 Intent intent = new Intent(getActivity(), UserAttendanceRecordDetailsActivity.class);
                 intent.putExtra("selectedRecord", selectedRecord); // Pass the selected record as an extra
+                intent.putExtra("openedFrom", "UserAttendanceRecordsFragment");
                 startActivity(intent);
             }
         });

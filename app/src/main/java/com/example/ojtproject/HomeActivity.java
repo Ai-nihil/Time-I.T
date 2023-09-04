@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class HomeActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager;
-    private int fragmentToLoad;
+    private String fragmentToLoad;
     FirebaseAuth authProfile;
 
     @Override
@@ -35,13 +35,22 @@ public class HomeActivity extends AppCompatActivity {
         // Retrieve updated profile data from intent
         Intent intent = getIntent();
         if (intent != null) {
-            fragmentToLoad = intent.getIntExtra("loadFragment", 0);
-            if (fragmentToLoad == 1) { // Replace with fragment identifier
-                fragmentToLoad = 0;
+            fragmentToLoad = intent.getStringExtra("openedFrom");
+            if (fragmentToLoad != null && fragmentToLoad.equals("UserProfileFragment")) { // Replace with fragment identifier
                 // Programmatically select the bottom navigation menu item
                 BottomNavigationView homeFragmentBottomNavigationView = findViewById(R.id.homeFragmentBottomNavigationView);
                 homeFragmentBottomNavigationView.setSelectedItemId(R.id.bottomNavigationMenuItemProfile);
                 loadUserProfileFragment(); // Custom method to load the fragment
+            } else if (fragmentToLoad != null && fragmentToLoad.equals("UserAttendanceRecordsFragment")) {
+                // Programmatically select the bottom navigation menu item
+                BottomNavigationView homeFragmentBottomNavigationView = findViewById(R.id.homeFragmentBottomNavigationView);
+                homeFragmentBottomNavigationView.setSelectedItemId(R.id.bottomNavigationMenuItemAttendanceRecords);
+                loadUserAttendanceRecordsFragment(); // Custom method to load the fragment
+            } else {
+                // Programmatically select the bottom navigation menu item
+                BottomNavigationView homeFragmentBottomNavigationView = findViewById(R.id.homeFragmentBottomNavigationView);
+                homeFragmentBottomNavigationView.setSelectedItemId(R.id.bottomNavigationMenuItemHome);
+                loadHomePageFragment(); // Custom method to load the fragment
             }
         }
 
@@ -50,9 +59,6 @@ public class HomeActivity extends AppCompatActivity {
 
             switch (item.getItemId()){
 
-                case R.id.bottomNavigationMenuItemHome:
-                    loadHomePageFragment();
-                    break;
                 case R.id.bottomNavigationMenuItemAttendanceRecords:
                     loadUserAttendanceRecordsFragment();
                     break;

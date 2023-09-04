@@ -182,7 +182,7 @@ public class HomePageFragment extends Fragment {
                                         }
                                         //From midnight until 8:44:59 AM, no status will be given
                                         else {
-                                            Toast.makeText(getActivity(), "Attendance not yet available. Please wait until the designated '\"'on-time'\"' start time of 8:45 AM - 9 to mark your attendance.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(), "Attendance not yet available. Please wait until the designated '\"'on-time'\"' start time of 8:45 AM - 9:15 AM to mark your attendance.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                     //Message when it's the weekends
@@ -300,7 +300,7 @@ public class HomePageFragment extends Fragment {
                                             }
                                             //From midnight until 8:44:59 AM, no status will be given
                                             else {
-                                                Toast.makeText(getActivity(), "Attendance not yet available. Please wait until the designated '\"'on-time'\"' start time of 8:45 AM - 9 to mark your attendance.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getActivity(), "Attendance not yet available. Please wait until the designated '\"'on-time'\"' start time of 8:45 AM - 9:15 AM to mark your attendance.", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                         //Message when it's the weekends

@@ -43,6 +43,8 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_profile_picture);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Button uploadProfilePictureActivityButtonChoosePicture = findViewById(R.id.uploadProfilePictureActivityButtonChoosePicture);
         Button uploadProfilePictureActivityButtonUploadDisplayPicture = findViewById(R.id.uploadProfilePictureActivityButtonUploadDisplayPicture);
         uploadProfilePictureActivityProgressBar = findViewById(R.id.uploadProfilePictureActivityProgressBar);
@@ -155,6 +157,9 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
 
         switch (item.getItemId()){
 
+            case android.R.id.home:
+                onBackPressed();
+                break;
             case R.id.commonMenuItemContactAdmin:
                 openEmailAppChooser();
                 break;
@@ -191,6 +196,18 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
             // If no email app is available, open browser to Gmail website
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://mail.google.com/"));
             startActivity(browserIntent);
+        }
+    }
+
+    public void onBackPressed() {
+        String openedFrom = getIntent().getStringExtra("openedFrom");
+        if ("UserUpdateProfileActivity".equals(openedFrom)) {
+            Intent intent = new Intent(UploadProfilePictureActivity.this, UserUpdateProfileActivity.class);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(UploadProfilePictureActivity.this, HomeActivity.class);
+            intent.putExtra("openedFrom", "UserProfileFragment");
+            startActivity(intent);
         }
     }
 }

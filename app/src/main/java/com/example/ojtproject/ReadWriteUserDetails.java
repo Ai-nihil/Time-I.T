@@ -1,7 +1,8 @@
 package com.example.ojtproject;
 
 public class ReadWriteUserDetails {
-    public String birthDate,
+    public String fullName,
+                  birthDate,
                   gender,
                   mobileNumber;
 
@@ -9,11 +10,16 @@ public class ReadWriteUserDetails {
     public ReadWriteUserDetails() {
     }
 
-    public ReadWriteUserDetails(String textBirthDate, String textGender, String textMobileNumber) {
+    public ReadWriteUserDetails(String textFullName, String textBirthDate, String textGender, String textMobileNumber) {
+        this.fullName = textFullName;
         this.birthDate = textBirthDate;
         this.gender = textGender;
         this.mobileNumber = textMobileNumber;
     }
+
+    public String getFullName() { return fullName; }
+
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
     public String getBirthDate() {
         return birthDate;

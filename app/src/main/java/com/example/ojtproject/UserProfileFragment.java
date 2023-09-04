@@ -99,6 +99,7 @@ public class UserProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), UserUpdateProfileActivity.class);
+                intent.putExtra("openedFrom", "UserProfileFragment");
                 startActivity(intent);
             }
         });
@@ -109,6 +110,7 @@ public class UserProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), UploadProfilePictureActivity.class);
+                intent.putExtra("openedFrom", "UserProfileFragment");
                 startActivity(intent);
             }
         });

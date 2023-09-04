@@ -1,6 +1,7 @@
 package com.example.ojtproject;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
@@ -8,17 +9,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -41,14 +46,22 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
                      userUpdateProfileActivityEditTextMobileNumber;
     private RadioGroup userUpdateProfileActivityRadioGroupGender;
     private RadioButton userUpdateProfileActivityRadioButtonGenderSelected;
-    private String fullName, email, birthday, gender, mobileNumber;
+    private String fullName, birthday, gender, mobileNumber,
+                   fullNameOld, birthdayOld, genderOld, mobileNumberOld;
     private FirebaseAuth authProfile;
     private ProgressBar userUpdateProfileActivityProgressBar;
+    private Boolean changesMadeFullName = false,
+                    changesMadeBirthdate = false,
+                    changesMadeMobileNumber = false,
+                    changesMadeGender = false;
+    private Boolean initialRadioButtonState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_update_profile);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         userUpdateProfileActivityProgressBar = findViewById(R.id.userUpdateProfileActivityProgressBar);
         userUpdateProfileActivityEditTextFullName = findViewById(R.id.userUpdateProfileActivityEditTextFullName);
@@ -69,6 +82,7 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(UserUpdateProfileActivity.this, UploadProfilePictureActivity.class);
+                intent.putExtra("openedFrom", "UserUpdateProfileActivity");
                 startActivity(intent);
                 finish();
             }
@@ -79,6 +93,7 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Extracting saved dd, m, yyyy into different variables by creating an array delimited by "/"
+                birthday = userUpdateProfileActivityEditTextBirthdate.getText().toString();
                 String currentBirthdate[] = birthday.split("/");
 
                 int day = Integer.parseInt(currentBirthdate[0]);
@@ -150,7 +165,7 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
             mobileNumber = userUpdateProfileActivityEditTextMobileNumber.getText().toString();
 
             //Enter User Data into the Firebase Realtime Database. Set up dependencies
-            ReadWriteUserDetails readWriteUserDetails = new ReadWriteUserDetails(birthday, gender, mobileNumber);
+            ReadWriteUserDetails readWriteUserDetails = new ReadWriteUserDetails(fullName, birthday, gender, mobileNumber);
 
             //Extract User reference from Database for "Registered Users"
             DatabaseReference referenceProfile = FirebaseDatabase.getInstance().getReference("Registered Users");
@@ -172,7 +187,7 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(UserUpdateProfileActivity.this, HomeActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("loadFragment", 1);
+                        intent.putExtra("openedFrom", "UserProfileFragment");
                         startActivity(intent);
 
                     } else {
@@ -203,22 +218,92 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ReadWriteUserDetails readWriteUserDetails = snapshot.getValue(ReadWriteUserDetails.class);
                 if(readWriteUserDetails != null){
-                    fullName = firebaseUser.getDisplayName();
-                    birthday = readWriteUserDetails.getBirthDate();
-                    gender = readWriteUserDetails.getGender();
-                    mobileNumber = readWriteUserDetails.getMobileNumber();
+                    fullNameOld = firebaseUser.getDisplayName();
+                    birthdayOld = readWriteUserDetails.getBirthDate();
+                    genderOld = readWriteUserDetails.getGender();
+                    mobileNumberOld = readWriteUserDetails.getMobileNumber();
 
-                    userUpdateProfileActivityEditTextFullName.setText(fullName);
-                    userUpdateProfileActivityEditTextBirthdate.setText(birthday);
-                    userUpdateProfileActivityEditTextMobileNumber.setText(mobileNumber);
+                    userUpdateProfileActivityEditTextFullName.setText(fullNameOld);
+                    userUpdateProfileActivityEditTextFullName.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                            // Check if the text has changed
+                            if (!charSequence.toString().equals(fullNameOld)) {
+                                changesMadeFullName = true;
+                            }
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
+
+                    userUpdateProfileActivityEditTextBirthdate.setText(birthdayOld);
+                    userUpdateProfileActivityEditTextBirthdate.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                            // Check if the text has changed
+                            if (!charSequence.toString().equals(birthdayOld)) {
+                                changesMadeBirthdate = true;
+                            }
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
+
+                    userUpdateProfileActivityEditTextMobileNumber.setText(mobileNumberOld);
+                    userUpdateProfileActivityEditTextMobileNumber.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                            // Check if the text has changed
+                            if (!charSequence.toString().equals(mobileNumberOld)) {
+                                changesMadeMobileNumber = true;
+                            }
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
 
                     //Show Gender through Radio Button
-                    if(gender.equals("Male")){
+                    if(genderOld.equals("Male")){
                         userUpdateProfileActivityRadioButtonGenderSelected = findViewById(R.id.userUpdateProfileActivityRadioButtonMale);
                     } else {
                         userUpdateProfileActivityRadioButtonGenderSelected = findViewById(R.id.userUpdateProfileActivityRadioButtonFemale);
                     }
                     userUpdateProfileActivityRadioButtonGenderSelected.setChecked(true);
+                    initialRadioButtonState = userUpdateProfileActivityRadioButtonGenderSelected.isChecked();
+                    userUpdateProfileActivityRadioButtonGenderSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                            // Check if the state of the RadioButton has changed
+                            if (isChecked != initialRadioButtonState) {
+                                changesMadeGender = true;
+                            }
+                        }
+                    });
+
                 } else {
                     Toast.makeText(UserUpdateProfileActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
                 }
@@ -248,6 +333,9 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
 
         switch (item.getItemId()){
 
+            case android.R.id.home:
+                onBackPressed();
+                break;
             case R.id.commonMenuItemContactAdmin:
                 openEmailAppChooser();
                 break;
@@ -285,5 +373,52 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://mail.google.com/"));
             startActivity(browserIntent);
         }
+    }
+
+    public void onBackPressed() {
+        if (changesMadeFullName == true || changesMadeBirthdate == true || changesMadeGender == true || changesMadeMobileNumber == true) {
+            // Changes have been made, show confirmation dialog
+            showExitConfirmationDialog();
+            changesMadeFullName = false;
+            changesMadeBirthdate = false;
+            changesMadeGender = false;
+            changesMadeMobileNumber = false;
+        }
+        else {
+            // No changes, perform default back action
+            changesMadeFullName = false;
+            changesMadeBirthdate = false;
+            changesMadeGender = false;
+            changesMadeMobileNumber = false;
+            String openedFrom = getIntent().getStringExtra("openedFrom");
+            Intent intent = new Intent(UserUpdateProfileActivity.this, HomeActivity.class);
+            intent.putExtra("openedFrom", "UserProfileFragment");
+            startActivity(intent);
+        }
+    }
+
+    private void showExitConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_exit, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+
+        TextView messageTextView = dialogView.findViewById(R.id.dialog_message);
+        Button yesButton = dialogView.findViewById(R.id.dialog_button_yes);
+        Button noButton = dialogView.findViewById(R.id.dialog_button_no);
+
+        yesButton.setOnClickListener(view -> {
+            // User confirmed, exit the activity
+            finish();
+        });
+
+        noButton.setOnClickListener(view -> {
+            // User canceled, dismiss the dialog
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 }
