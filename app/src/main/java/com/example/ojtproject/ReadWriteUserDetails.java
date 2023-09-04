@@ -4,7 +4,9 @@ public class ReadWriteUserDetails {
     public String fullName,
                   birthDate,
                   gender,
-                  mobileNumber;
+                  mobileNumber,
+                  imageUrl,
+                  userId;
 
     //Empty Constructor
     public ReadWriteUserDetails() {
@@ -43,5 +45,21 @@ public class ReadWriteUserDetails {
 
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

@@ -23,6 +23,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -34,8 +36,10 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
     private ImageView uploadProfilePictureActivityImageViewDisplayPicture;
     private FirebaseAuth authProfile;
     private StorageReference storageReference;
+    private DatabaseReference databaseReference;
     private FirebaseUser firebaseUser;
     private static final int PICK_IMAGE_REQUEST = 1;
+    private ReadWriteUserDetails user;
     private Uri uriImage;
 
     @Override
@@ -101,6 +105,17 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
         if (uriImage != null) {
             //Save the image with uid of the currently logged in user
             StorageReference fileReference = storageReference.child(authProfile.getCurrentUser().getUid() + "." + getFileExtension(uriImage));
+
+            // Storing the image URL into real time database
+            String fileReferenceString = String.valueOf(fileReference);
+            databaseReference = FirebaseDatabase.getInstance().getReference();
+            databaseReference.child("Registered Users").child(firebaseUser.getUid()).child("imageUrl").get().addOnCompleteListener(fileReferenceObject -> {
+                if (fileReferenceObject.isSuccessful()) {
+                    if (fileReferenceObject.getResult().getValue() == null) {
+                        databaseReference.child("Registered Users").child(firebaseUser.getUid()).child("imageUrl").setValue(fileReferenceString);
+                    }
+                }
+            });
 
             //Upload image to Storage
             fileReference.putFile(uriImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
