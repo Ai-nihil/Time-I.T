@@ -2,6 +2,7 @@
 package com.example.ojtproject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,13 +46,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         ReadWriteUserDetails user = userList.get(position);
+        holder.nameTextView.setText(user.getFullName());
         holder.genderTextView.setText(user.getGender());
         holder.birthdayTextView.setText(user.getBirthDate());
         if(user.getImageUrl() != null) {
             String[] imageRefParts = user.getImageUrl().split("/");
             String imageRef = new String(imageRefParts[3] + "/" + imageRefParts[4]);
             StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(imageRef);
-
             storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
 
                 Glide.with(context)
@@ -74,8 +75,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                         .into(holder.userImageView);
             });
 
-
-
+            holder.itemView.setOnClickListener((v) -> {
+                Intent intent = new Intent(context, AdminView.class);
+                context.startActivity(intent);
+            });
         }
     }
 

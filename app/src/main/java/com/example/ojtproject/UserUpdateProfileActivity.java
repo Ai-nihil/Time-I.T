@@ -138,6 +138,11 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
         int selectedGenderID = userUpdateProfileActivityRadioGroupGender.getCheckedRadioButtonId();
         userUpdateProfileActivityRadioButtonGenderSelected = findViewById(selectedGenderID);
 
+        gender = userUpdateProfileActivityRadioButtonGenderSelected.getText().toString();
+        fullName = userUpdateProfileActivityEditTextFullName.getText().toString();
+        birthday = userUpdateProfileActivityEditTextBirthdate.getText().toString();
+        mobileNumber = userUpdateProfileActivityEditTextMobileNumber.getText().toString();
+
         if(TextUtils.isEmpty(fullName)){
             Toast.makeText(UserUpdateProfileActivity.this,"Please enter your full name", Toast.LENGTH_LONG).show();
             userUpdateProfileActivityEditTextFullName.setError("Full Name is required");
@@ -159,10 +164,6 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
             userUpdateProfileActivityEditTextMobileNumber.setError("Mobile Number should be 11 digits");
             userUpdateProfileActivityEditTextMobileNumber.requestFocus();
         } else {
-            gender = userUpdateProfileActivityRadioButtonGenderSelected.getText().toString();
-            fullName = userUpdateProfileActivityEditTextFullName.getText().toString();
-            birthday = userUpdateProfileActivityEditTextBirthdate.getText().toString();
-            mobileNumber = userUpdateProfileActivityEditTextMobileNumber.getText().toString();
 
             //Enter User Data into the Firebase Realtime Database. Set up dependencies
             ReadWriteUserDetails readWriteUserDetails = new ReadWriteUserDetails(fullName, birthday, gender, mobileNumber);
@@ -173,6 +174,15 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
             String userID = firebaseUser.getUid();
 
             userUpdateProfileActivityProgressBar.setVisibility(View.VISIBLE);
+
+            referenceProfile.child(userID).child("userType").get().addOnCompleteListener(existingUserType -> {
+                if(existingUserType.isSuccessful()) {
+                    if(existingUserType.getResult().getValue() == null) {
+                        // Child "userType" does not exist, create it with the initial value of userType
+                        referenceProfile.child(userID).child("userType").setValue("user");
+                    }
+                }
+            });
 
             referenceProfile.child(userID).setValue(readWriteUserDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
