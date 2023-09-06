@@ -1,21 +1,29 @@
 package com.example.ojtproject;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -41,8 +49,16 @@ public class RegisterActivity extends AppCompatActivity {
                      registerActivityEditTextConfirmPassword;
     private ProgressBar registerActivityProgressBar;
     private RadioGroup registerActivityRadioGroupGender;
-    private RadioButton registerActivityRadioButtonGenderSelected;
+    private RadioButton registerActivityRadioButtonGenderSelected,
+                        registerActivityRadioButtonMale,
+                        registerActivityRadioButtonFemale;
     private DatePickerDialog picker;
+    private Boolean changesMadeFullName = false,
+            changesMadeBirthdate = false,
+            changesMadeMobileNumber = false,
+            changesMadeGender = false;
+    private Boolean registerActivityRadioButtonMaleIsChecked = false,
+                    registerActivityRadioButtonFemaleIsChecked = false;
     private static final String TAG= "RegisterActivity";
 
     @Override
@@ -56,15 +72,93 @@ public class RegisterActivity extends AppCompatActivity {
 
         registerActivityProgressBar = findViewById(R.id.registerActivityProgressBar);
         registerActivityEditTextFullName = findViewById(R.id.registerActivityEditTextFullName);
+        registerActivityEditTextFullName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Check if the text has changed
+                if (!charSequence.toString().isEmpty()) {
+                    changesMadeFullName = true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         registerActivityEditTextEmail = findViewById(R.id.registerActivityEditTextEmail);
         registerActivityEditTextBirthdate = findViewById(R.id.registerActivityEditTextBirthdate);
+        registerActivityEditTextBirthdate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Check if the text has changed
+                if (!charSequence.toString().isEmpty()) {
+                    changesMadeBirthdate = true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         registerActivityEditTextMobileNumber = findViewById(R.id.registerActivityEditTextMobileNumber);
+        registerActivityEditTextMobileNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Check if the text has changed
+                if (!charSequence.toString().isEmpty()) {
+                    changesMadeMobileNumber = true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         registerActivityEditTextPassword = findViewById(R.id.registerActivityEditTextPassword);
         registerActivityEditTextConfirmPassword = findViewById(R.id.registerActivityEditTextConfirmPassword);
 
         //RadioButton for Gender
         registerActivityRadioGroupGender = findViewById(R.id.registerActivityRadioGroupGender);
         registerActivityRadioGroupGender.clearCheck();
+
+        // Set a listener for the RadioGroup to track changes
+        registerActivityRadioGroupGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // Check which RadioButton is selected
+                if (checkedId == R.id.registerActivityRadioButtonMale) {
+                    registerActivityRadioButtonMaleIsChecked = true;
+                    registerActivityRadioButtonFemaleIsChecked = false;
+                } else if (checkedId == R.id.registerActivityRadioButtonFemale) {
+                    registerActivityRadioButtonFemaleIsChecked = true;
+                    registerActivityRadioButtonMaleIsChecked = false;
+                }
+
+                if(registerActivityRadioButtonMaleIsChecked != false || registerActivityRadioButtonFemaleIsChecked != false){
+                    changesMadeGender = true;
+                }
+            }
+        });
+
+
 
         //Setting up DatePicker on EditText
         registerActivityEditTextBirthdate.setOnClickListener(new View.OnClickListener() {
@@ -247,5 +341,63 @@ public class RegisterActivity extends AppCompatActivity {
                         registerActivityProgressBar.setVisibility(View.GONE);
                     }
                 });
+    }
+
+    //When any menu item is selected
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home){
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void onBackPressed() {
+        if (changesMadeFullName == true || changesMadeBirthdate == true || changesMadeGender == true || changesMadeMobileNumber == true) {
+            // Changes have been made, show confirmation dialog
+            showExitConfirmationDialog();
+            changesMadeFullName = false;
+            changesMadeBirthdate = false;
+            changesMadeGender = false;
+            changesMadeMobileNumber = false;
+        }
+        else {
+            // No changes, perform default back action
+            changesMadeFullName = false;
+            changesMadeBirthdate = false;
+            changesMadeGender = false;
+            changesMadeMobileNumber = false;
+            String openedFrom = getIntent().getStringExtra("openedFrom");
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            intent.putExtra("openedFrom", "UserProfileFragment");
+            startActivity(intent);
+        }
+    }
+
+    private void showExitConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_exit, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+
+        TextView messageTextView = dialogView.findViewById(R.id.dialog_message);
+        Button yesButton = dialogView.findViewById(R.id.dialog_button_yes);
+        Button noButton = dialogView.findViewById(R.id.dialog_button_no);
+
+        yesButton.setOnClickListener(view -> {
+            // User confirmed, exit the activity
+            finish();
+        });
+
+        noButton.setOnClickListener(view -> {
+            // User canceled, dismiss the dialog
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 }

@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:padding="12dp"
     android:layout_marginVertical="8dp"
-    android:backgroundTint="@color/white"
+    android:backgroundTint="@color/light_gray"
     android:background="@drawable/rounded_corner">
 
     <ImageView
@@ -15,6 +15,7 @@
         android:layout_width="130dp"
         android:layout_height="130dp"
         android:layout_marginBottom="5dp"
+        android:background="@drawable/border"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView

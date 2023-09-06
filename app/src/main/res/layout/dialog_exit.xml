@@ -16,14 +16,14 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_gravity="end">
 
         <Button
             android:id="@+id/dialog_button_yes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
-            android:background="@color/light_gray"
             android:text="Ok"/>
 
         <Button

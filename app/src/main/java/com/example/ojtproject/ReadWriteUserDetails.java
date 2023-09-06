@@ -8,6 +8,7 @@ public class ReadWriteUserDetails {
                   imageUrl,
                   userId;
 
+
     //Empty Constructor
     public ReadWriteUserDetails() {
     }

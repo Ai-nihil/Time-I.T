@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 public class ReadWriteUserTimeDetails implements Parcelable {
     private String dateClockInTime, dateDay, clockInStatus, dateClockOutTime, clockOutStatus;
+    private Long timestamp;
 
     public ReadWriteUserTimeDetails() {
     }
@@ -89,5 +90,13 @@ public class ReadWriteUserTimeDetails implements Parcelable {
         dest.writeString(clockInStatus);
         dest.writeString(dateClockOutTime);
         dest.writeString(clockOutStatus);
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
     }
 }

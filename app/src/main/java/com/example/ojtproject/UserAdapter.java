@@ -3,7 +3,6 @@ package com.example.ojtproject;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +18,8 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.squareup.picasso.Picasso;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
@@ -40,6 +38,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_admin, parent, false);
+
         return new UserViewHolder(view);
     }
 
@@ -48,7 +47,36 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         ReadWriteUserDetails user = userList.get(position);
         holder.genderTextView.setText(user.getGender());
         holder.birthdayTextView.setText(user.getBirthDate());
-        Glide.with(context).load(user.getImageUrl()).into(holder.userImageView);
+        if(user.getImageUrl() != null) {
+            String[] imageRefParts = user.getImageUrl().split("/");
+            String imageRef = new String(imageRefParts[3] + "/" + imageRefParts[4]);
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(imageRef);
+
+            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+
+                Glide.with(context)
+                        .load(storageRef)
+                        .centerCrop()
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                // Handle the error here
+                                System.out.println("Ito ung error: " + e.getMessage());
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                // Image loaded successfully
+                                return false;
+                            }
+                        })
+                        .into(holder.userImageView);
+            });
+
+
+
+        }
     }
 
     @Override
