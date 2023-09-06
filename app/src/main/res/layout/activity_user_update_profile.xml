@@ -38,12 +38,13 @@
             android:id="@+id/userUpdateProfileActivityEditTextFullName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/userUpdateProfileActivityTextViewFullName"
+            android:background="@drawable/border"
             android:hint="Enter your full name"
             android:inputType="textPersonName"
-            android:textSize="16sp"
+            android:minHeight="48dp"
             android:padding="6dp"
-            android:layout_below="@+id/userUpdateProfileActivityTextViewFullName"
-            android:background="@drawable/border"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/userUpdateProfileActivityTextViewBirthdate"
@@ -60,13 +61,14 @@
             android:id="@+id/userUpdateProfileActivityEditTextBirthdate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/userUpdateProfileActivityTextViewBirthdate"
+            android:background="@drawable/border"
+            android:focusable="false"
             android:hint="Select your birthdate (dd/mm/yyyy)"
             android:inputType="date"
-            android:focusable="false"
-            android:textSize="16sp"
+            android:minHeight="48dp"
             android:padding="6dp"
-            android:layout_below="@+id/userUpdateProfileActivityTextViewBirthdate"
-            android:background="@drawable/border"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/userUpdateProfileActivityTextViewGender"
@@ -118,12 +120,13 @@
             android:id="@+id/userUpdateProfileActivityEditTextMobileNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/userUpdateProfileActivityTextViewMobileNumber"
+            android:background="@drawable/border"
             android:hint="Enter your mobile number"
             android:inputType="phone"
-            android:textSize="16sp"
+            android:minHeight="48dp"
             android:padding="6dp"
-            android:layout_below="@+id/userUpdateProfileActivityTextViewMobileNumber"
-            android:background="@drawable/border"/>
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/userUpdateProfileActivityButtonUploadChangePassword"
