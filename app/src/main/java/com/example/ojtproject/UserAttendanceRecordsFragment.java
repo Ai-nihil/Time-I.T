@@ -69,16 +69,6 @@ public class UserAttendanceRecordsFragment extends Fragment {
         readWriteUserTimeDetailsList = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference("Attendance");
 
-        // Generate a unique timestamp as the key
-        String key = databaseReference.push().getKey();
-
-        // Create the data you want to store
-        Map<String, Object> data = new HashMap<>();
-        data.put("timestamp", ServerValue.TIMESTAMP); // Use Firebase server timestamp
-
-        // Add the data to the database with the timestamp key
-        databaseReference.child(key).setValue(data);
-
         customFilterListener = new CustomFilterListener() {
             @Override
             public void onFilterResults(boolean hasMatches) {
@@ -116,13 +106,8 @@ public class UserAttendanceRecordsFragment extends Fragment {
         if (currentUser != null) {
             userUserAttendanceRecordsFragmentProgressBar.setVisibility(View.VISIBLE);
             String uid = currentUser.getUid();
-
-            DatabaseReference userAttendanceDatabaseReference = databaseReference.child(uid);
-            // Query data by timestamp in ascending order
-            Query query = userAttendanceDatabaseReference.orderByChild("timestamp");
-
             // Fetch attendance records from Firebase and populate the attendanceList
-            query.addValueEventListener(new ValueEventListener() {
+            databaseReference.child(uid).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     readWriteUserTimeDetailsList.clear(); // Clear existing data before populating
@@ -130,26 +115,8 @@ public class UserAttendanceRecordsFragment extends Fragment {
                     // Add readWriteUserTimeDetails objects to the List<readWriteUserTimeDetails>
                     for (DataSnapshot recordSnapshot : dataSnapshot.getChildren()) {
                         ReadWriteUserTimeDetails readWriteUserTimeDetails = recordSnapshot.getValue(ReadWriteUserTimeDetails.class);
-                        // Retrieve the timestamp from the DataSnapshot
-                        Long timestamp = recordSnapshot.child("timestamp").getValue(Long.class);
-
-                        // Set the timestamp to the readWriteUserTimeDetails object
-                        if (readWriteUserTimeDetails != null) {
-                            readWriteUserTimeDetails.setTimestamp(timestamp);
-                            readWriteUserTimeDetailsList.add(readWriteUserTimeDetails);
-                        }
+                        readWriteUserTimeDetailsList.add(readWriteUserTimeDetails);
                     }
-
-                    // Sort the list by timestamp in ascending order (earliest to latest)
-                    Collections.sort(readWriteUserTimeDetailsList, new Comparator<ReadWriteUserTimeDetails>() {
-                        @Override
-                        public int compare(ReadWriteUserTimeDetails item1, ReadWriteUserTimeDetails item2) {
-                            // Compare timestamps here, assuming they are Long values
-                            Long timestamp1 = item1.getTimestamp();
-                            Long timestamp2 = item2.getTimestamp();
-                            return timestamp2.compareTo(timestamp1);
-                        }
-                    });
 
                     listAdapter.notifyDataSetChanged();// Notify adapter of data change
                     userAttendanceRecordsFragmentListView.setVisibility(View.VISIBLE);
