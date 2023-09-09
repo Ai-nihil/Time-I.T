@@ -118,6 +118,17 @@ public class UserAttendanceRecordsFragment extends Fragment {
                         readWriteUserTimeDetailsList.add(readWriteUserTimeDetails);
                     }
 
+                    // Sort the list by timestamp in descending order (latest to earliest)
+                    Collections.sort(readWriteUserTimeDetailsList, new Comparator<ReadWriteUserTimeDetails>() {
+                        @Override
+                        public int compare(ReadWriteUserTimeDetails item1, ReadWriteUserTimeDetails item2) {
+                            // Compare timestamps here, assuming they are Long values
+                            Long timestamp1 = item1.getTimestamp();
+                            Long timestamp2 = item2.getTimestamp();
+                            return timestamp2.compareTo(timestamp1); // Sort in descending order
+                        }
+                    });
+
                     listAdapter.notifyDataSetChanged();// Notify adapter of data change
                     userAttendanceRecordsFragmentListView.setVisibility(View.VISIBLE);
                     userAttendanceRecordsFragmentSearchView.setVisibility(View.VISIBLE);

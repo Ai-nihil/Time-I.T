@@ -3,9 +3,12 @@ package com.example.ojtproject;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Map;
+
 public class ReadWriteUserTimeDetails implements Parcelable {
     private String dateClockInTime, dateDay, clockInStatus, dateClockOutTime, clockOutStatus;
     private Long timestamp;
+    private Map<String, String> timestampFromServer;
 
     public ReadWriteUserTimeDetails() {
     }
@@ -98,5 +101,13 @@ public class ReadWriteUserTimeDetails implements Parcelable {
 
     public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Map<String, String> getTimestampFromServer() {
+        return timestampFromServer;
+    }
+
+    public void setTimestampFromServer(Map<String, String> timestampFromServer) {
+        this.timestampFromServer = timestampFromServer;
     }
 }
