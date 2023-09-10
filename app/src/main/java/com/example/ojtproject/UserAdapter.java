@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -27,7 +28,8 @@ import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
     Context context;
     private List<ReadWriteUserDetails> userList;
-    private OnItemClickListener itemClickListener;
+    private UserAdapter.OnItemClickListener itemClickListener;
+    String userID;
 
     public UserAdapter(List<ReadWriteUserDetails> userList, OnItemClickListener itemClickListener, Context context) {
         this.userList = userList;
@@ -39,7 +41,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_admin, parent, false);
-
         return new UserViewHolder(view);
     }
 
@@ -76,7 +77,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             });
 
             holder.itemView.setOnClickListener((v) -> {
-                Intent intent = new Intent(context, AdminView.class);
+                Intent intent = new Intent(context, UserAttendanceAdminView.class);
+                intent.putExtra("userID", user.getUserId());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             });
         }

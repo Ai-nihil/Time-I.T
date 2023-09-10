@@ -19,6 +19,13 @@
         android:theme="@style/Theme.OJTProject"
         tools:targetApi="31">
         <activity
+            android:name=".UserAttendanceAdminView"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".AdminView"
             android:exported="false">
             <meta-data
@@ -32,8 +39,9 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".UserUpdateProfileActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".UserUpdateProfileActivity" />
         </activity>
         <activity
             android:name=".UserUpdateProfileActivity"
@@ -82,8 +90,9 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LoginActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".LoginActivity" />
         </activity>
         <activity
             android:name=".HomePageActivity"
@@ -100,8 +109,9 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".RegisterActivity"
@@ -110,8 +120,8 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-<!--            <meta-data android:name="android.support.PARENT_ACTIVITY"-->
-<!--                android:value=".MainActivity"/>-->
+            <!-- <meta-data android:name="android.support.PARENT_ACTIVITY" -->
+            <!-- android:value=".MainActivity"/> -->
         </activity>
         <activity
             android:name=".MainActivity"
@@ -127,6 +137,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <receiver
             android:name=".AlarmReceiver"
             android:enabled="true"
