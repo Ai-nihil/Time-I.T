@@ -21,11 +21,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class AlarmReceiver extends BroadcastReceiver {
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -78,8 +81,15 @@ public class AlarmReceiver extends BroadcastReceiver {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (!dataSnapshot.exists()) {
                                     // Update the status to "Absent"
-                                    ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails(currentDate, "9:45:00 AM", "Absent", "9:45:00 AM", "Absent");
-                                    userAttendanceRef.push().setValue(readWriteUserTimeDetails);
+                                    // Update the status to "Absent" with ServerValue.TIMESTAMP
+                                    Map<String, Object> data = new HashMap<>();
+                                    data.put("dateDay", currentDate);
+                                    data.put("dateClockInTime", "9:45:00 AM");
+                                    data.put("clockInStatus", "Absent");
+                                    data.put("dateClockOutTime", "9:45:00 AM");
+                                    data.put("clockOutStatus", "Absent");
+                                    data.put("timestamp", ServerValue.TIMESTAMP);
+                                    userAttendanceRef.push().setValue(data);
                                 }
                             }
 
@@ -88,6 +98,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 // Handle error
                             }
                         });
+
 
                     }
                 } else {
@@ -117,8 +128,15 @@ public class AlarmReceiver extends BroadcastReceiver {
                                     String amPmTimeFormat = outputFormat.format(dateClockInTime);
 
                                     // Update the clock-out status to "On-Time"
-                                    ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails(currentDate, amPmTimeFormat, storedClockInStatus, "5:59:59 PM", "Undertime");
-                                    userAttendanceRef.push().setValue(readWriteUserTimeDetails);
+//                                    ReadWriteUserTimeDetails readWriteUserTimeDetails = new ReadWriteUserTimeDetails(currentDate, amPmTimeFormat, storedClockInStatus, "5:59:59 PM", "Undertime");
+                                    Map<String, Object> data = new HashMap<>();
+                                    data.put("dateDay", currentDate);
+                                    data.put("dateClockInTime", amPmTimeFormat);
+                                    data.put("clockInStatus", storedClockInStatus);
+                                    data.put("dateClockOutTime", "5:59:59 PM");
+                                    data.put("clockOutStatus", "Undertime");
+                                    data.put("timestamp", ServerValue.TIMESTAMP);
+                                    userAttendanceRef.push().setValue(data);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     // Set the flag value to false
                                     editor.putBoolean("clockInButtonTapped", false);

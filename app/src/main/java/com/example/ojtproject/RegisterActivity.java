@@ -49,9 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
                      registerActivityEditTextConfirmPassword;
     private ProgressBar registerActivityProgressBar;
     private RadioGroup registerActivityRadioGroupGender;
-    private RadioButton registerActivityRadioButtonGenderSelected,
-                        registerActivityRadioButtonMale,
-                        registerActivityRadioButtonFemale;
+    private RadioButton registerActivityRadioButtonGenderSelected;
     private DatePickerDialog picker;
     private Boolean changesMadeFullName = false,
             changesMadeBirthdate = false,
@@ -68,6 +66,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Register");
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Toast.makeText(RegisterActivity.this,"You can register now", Toast.LENGTH_LONG).show();
 
         registerActivityProgressBar = findViewById(R.id.registerActivityProgressBar);
@@ -83,6 +83,8 @@ public class RegisterActivity extends AppCompatActivity {
                 // Check if the text has changed
                 if (!charSequence.toString().isEmpty()) {
                     changesMadeFullName = true;
+                } else {
+                    changesMadeFullName = false;
                 }
             }
 
@@ -370,7 +372,7 @@ public class RegisterActivity extends AppCompatActivity {
             changesMadeGender = false;
             changesMadeMobileNumber = false;
             String openedFrom = getIntent().getStringExtra("openedFrom");
-            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
             intent.putExtra("openedFrom", "UserProfileFragment");
             startActivity(intent);
         }
