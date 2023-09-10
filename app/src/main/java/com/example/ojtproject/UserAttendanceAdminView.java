@@ -37,18 +37,21 @@ public class UserAttendanceAdminView extends AppCompatActivity implements UserAt
         recyclerView.setAdapter(userAttendanceAdminAdapter);
 
         userID = getIntent().getStringExtra("userID");
+        Toast.makeText(UserAttendanceAdminView.this, userID, Toast.LENGTH_LONG).show();
 
         // Retrieve the user data from Firebase and add it to the userList
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("Attendance").child(userID);
-        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        usersRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userTimeDetailsList.clear(); // Clear existing data before populating
-                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                    ReadWriteUserTimeDetails userTimeDetails = userSnapshot.getValue(ReadWriteUserTimeDetails.class);
-                    userTimeDetailsList.add(userTimeDetails);
-                    Toast.makeText(UserAttendanceAdminView.this, userTimeDetails.toString(), Toast.LENGTH_LONG).show();
+
+                // Add readWriteUserTimeDetails objects to the List<readWriteUserTimeDetails>
+                for (DataSnapshot recordSnapshot : dataSnapshot.getChildren()) {
+                    ReadWriteUserTimeDetails readWriteUserTimeDetails = recordSnapshot.getValue(ReadWriteUserTimeDetails.class);
+                    userTimeDetailsList.add(readWriteUserTimeDetails);
                 }
+
                 userAttendanceAdminAdapter.notifyDataSetChanged();
             }
 
@@ -57,10 +60,11 @@ public class UserAttendanceAdminView extends AppCompatActivity implements UserAt
                 // Handle any errors
             }
         });
+
     }
 
     @Override
     public void onItemClick(ReadWriteUserTimeDetails userTimeDetails) {
-
+        // Handle item click event if needed
     }
 }
