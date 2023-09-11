@@ -277,7 +277,13 @@ public class RegisterActivity extends AppCompatActivity {
 
                             //Extracting User reference from Database for "Registered Users"
                             DatabaseReference referenceProfile = FirebaseDatabase.getInstance().getReference("Registered Users");
-                            referenceProfile.child(firebaseUser.getUid()).child("userType").setValue("user");
+                            referenceProfile.child(firebaseUser.getUid()).child("userType").get().addOnCompleteListener(recordedUserType -> {
+                                if(recordedUserType.isSuccessful()) {
+                                    if(recordedUserType.getResult().getValue() == null) {
+                                        referenceProfile.child(firebaseUser.getUid()).child("userType").setValue("user");
+                                    }
+                                }
+                            });
 
                             referenceProfile.child(firebaseUser.getUid()).setValue(writeUserDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
