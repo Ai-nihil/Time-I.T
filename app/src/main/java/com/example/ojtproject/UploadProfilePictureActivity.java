@@ -2,6 +2,7 @@ package com.example.ojtproject;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentResolver;
@@ -16,6 +17,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,8 +41,8 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseUser firebaseUser;
     private static final int PICK_IMAGE_REQUEST = 1;
-    private ReadWriteUserDetails user;
     private Uri uriImage;
+    private Boolean changesMadeUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +61,12 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
 
         storageReference = FirebaseStorage.getInstance().getReference("DisplayPics");
 
-        Uri uri = firebaseUser.getPhotoUrl();
+        Uri uriCurrent = firebaseUser.getPhotoUrl();
+        changesMadeUri = false;
 
         //Set User's current DP in ImageView (if uploaded already). Use Picasso for imageViewer setImage
         //Regular URIs.
-        Picasso.get().load(uri).into(uploadProfilePictureActivityImageViewDisplayPicture);
+        Picasso.get().load(uriCurrent).into(uploadProfilePictureActivityImageViewDisplayPicture);
 
         //Choosing picture to upload
         uploadProfilePictureActivityButtonChoosePicture.setOnClickListener(new View.OnClickListener() {
@@ -98,6 +101,7 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null){
             uriImage = data.getData();
             uploadProfilePictureActivityImageViewDisplayPicture.setImageURI(uriImage);
+            changesMadeUri = true;
         }
     }
 
@@ -215,14 +219,52 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
     }
 
     public void onBackPressed() {
-        String openedFrom = getIntent().getStringExtra("openedFrom");
-        if ("UserUpdateProfileActivity".equals(openedFrom)) {
-            Intent intent = new Intent(UploadProfilePictureActivity.this, UserUpdateProfileActivity.class);
-            startActivity(intent);
+        if (changesMadeUri == true){
+            // Changes have been made, show confirmation dialog
+            showExitConfirmationDialog();
         } else {
-            Intent intent = new Intent(UploadProfilePictureActivity.this, HomeActivity.class);
-            intent.putExtra("openedFrom", "UserProfileFragment");
-            startActivity(intent);
+            String openedFrom = getIntent().getStringExtra("openedFrom");
+            if ("UserUpdateProfileActivity".equals(openedFrom)) {
+                Intent intent = new Intent(UploadProfilePictureActivity.this, UserUpdateProfileActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(UploadProfilePictureActivity.this, HomeActivity.class);
+                intent.putExtra("openedFrom", "UserProfileFragment");
+                startActivity(intent);
+            }
         }
+    }
+
+    private void showExitConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_exit, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+
+        TextView messageTextView = dialogView.findViewById(R.id.dialog_message);
+        Button yesButton = dialogView.findViewById(R.id.dialog_button_yes);
+        Button noButton = dialogView.findViewById(R.id.dialog_button_no);
+
+        yesButton.setOnClickListener(view -> {
+            // User confirmed, exit the activity
+            String openedFrom = getIntent().getStringExtra("openedFrom");
+            if ("UserUpdateProfileActivity".equals(openedFrom)) {
+                Intent intent = new Intent(UploadProfilePictureActivity.this, UserUpdateProfileActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(UploadProfilePictureActivity.this, HomeActivity.class);
+                intent.putExtra("openedFrom", "UserProfileFragment");
+                startActivity(intent);
+            }
+        });
+
+        noButton.setOnClickListener(view -> {
+            // User canceled, dismiss the dialog
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 }

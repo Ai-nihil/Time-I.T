@@ -245,6 +245,8 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
                             // Check if the text has changed
                             if (!charSequence.toString().equals(fullNameOld)) {
                                 changesMadeFullName = true;
+                            } else {
+                                changesMadeFullName = false;
                             }
                         }
 
@@ -266,6 +268,8 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
                             // Check if the text has changed
                             if (!charSequence.toString().equals(birthdayOld)) {
                                 changesMadeBirthdate = true;
+                            } else {
+                                changesMadeBirthdate = false;
                             }
                         }
 
@@ -287,6 +291,8 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
                             // Check if the text has changed
                             if (!charSequence.toString().equals(mobileNumberOld)) {
                                 changesMadeMobileNumber = true;
+                            } else {
+                                changesMadeMobileNumber = false;
                             }
                         }
 
@@ -389,18 +395,9 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
         if (changesMadeFullName == true || changesMadeBirthdate == true || changesMadeGender == true || changesMadeMobileNumber == true) {
             // Changes have been made, show confirmation dialog
             showExitConfirmationDialog();
-            changesMadeFullName = false;
-            changesMadeBirthdate = false;
-            changesMadeGender = false;
-            changesMadeMobileNumber = false;
         }
         else {
             // No changes, perform default back action
-            changesMadeFullName = false;
-            changesMadeBirthdate = false;
-            changesMadeGender = false;
-            changesMadeMobileNumber = false;
-            String openedFrom = getIntent().getStringExtra("openedFrom");
             Intent intent = new Intent(UserUpdateProfileActivity.this, HomeActivity.class);
             intent.putExtra("openedFrom", "UserProfileFragment");
             startActivity(intent);

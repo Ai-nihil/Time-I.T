@@ -52,9 +52,12 @@ public class RegisterActivity extends AppCompatActivity {
     private RadioButton registerActivityRadioButtonGenderSelected;
     private DatePickerDialog picker;
     private Boolean changesMadeFullName = false,
-            changesMadeBirthdate = false,
-            changesMadeMobileNumber = false,
-            changesMadeGender = false;
+                    changesMadeBirthdate = false,
+                    changesMadeMobileNumber = false,
+                    changesMadeGender = false,
+                    changesMadeEmail = false,
+                    changesMadePassword = false,
+                    changesMadeConfirmPassword = false;
     private Boolean registerActivityRadioButtonMaleIsChecked = false,
                     registerActivityRadioButtonFemaleIsChecked = false;
     private static final String TAG= "RegisterActivity";
@@ -94,6 +97,27 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
         registerActivityEditTextEmail = findViewById(R.id.registerActivityEditTextEmail);
+        registerActivityEditTextEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Check if the text has changed
+                if (!charSequence.toString().isEmpty()) {
+                    changesMadeEmail = true;
+                } else {
+                    changesMadeEmail = false;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         registerActivityEditTextBirthdate = findViewById(R.id.registerActivityEditTextBirthdate);
         registerActivityEditTextBirthdate.addTextChangedListener(new TextWatcher() {
             @Override
@@ -106,6 +130,8 @@ public class RegisterActivity extends AppCompatActivity {
                 // Check if the text has changed
                 if (!charSequence.toString().isEmpty()) {
                     changesMadeBirthdate = true;
+                } else {
+                    changesMadeBirthdate = false;
                 }
             }
 
@@ -126,6 +152,8 @@ public class RegisterActivity extends AppCompatActivity {
                 // Check if the text has changed
                 if (!charSequence.toString().isEmpty()) {
                     changesMadeMobileNumber = true;
+                } else {
+                    changesMadeMobileNumber = false;
                 }
             }
 
@@ -135,8 +163,49 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
         registerActivityEditTextPassword = findViewById(R.id.registerActivityEditTextPassword);
-        registerActivityEditTextConfirmPassword = findViewById(R.id.registerActivityEditTextConfirmPassword);
+        registerActivityEditTextPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Check if the text has changed
+                if (!charSequence.toString().isEmpty()) {
+                    changesMadePassword = true;
+                } else {
+                    changesMadePassword = false;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        registerActivityEditTextConfirmPassword = findViewById(R.id.registerActivityEditTextConfirmPassword);
+        registerActivityEditTextConfirmPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Check if the text has changed
+                if (!charSequence.toString().isEmpty()) {
+                    changesMadeConfirmPassword = true;
+                } else {
+                    changesMadeConfirmPassword = false;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         //RadioButton for Gender
         registerActivityRadioGroupGender = findViewById(R.id.registerActivityRadioGroupGender);
         registerActivityRadioGroupGender.clearCheck();
@@ -364,23 +433,13 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void onBackPressed() {
-        if (changesMadeFullName == true || changesMadeBirthdate == true || changesMadeGender == true || changesMadeMobileNumber == true) {
+        if (changesMadeFullName == true || changesMadeBirthdate == true || changesMadeEmail == true || changesMadeGender == true || changesMadeMobileNumber == true || changesMadePassword == true || changesMadeConfirmPassword == true) {
             // Changes have been made, show confirmation dialog
             showExitConfirmationDialog();
-            changesMadeFullName = false;
-            changesMadeBirthdate = false;
-            changesMadeGender = false;
-            changesMadeMobileNumber = false;
         }
         else {
             // No changes, perform default back action
-            changesMadeFullName = false;
-            changesMadeBirthdate = false;
-            changesMadeGender = false;
-            changesMadeMobileNumber = false;
-            String openedFrom = getIntent().getStringExtra("openedFrom");
             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-            intent.putExtra("openedFrom", "UserProfileFragment");
             startActivity(intent);
         }
     }
