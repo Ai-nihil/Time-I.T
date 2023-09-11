@@ -137,46 +137,49 @@ public class LoginActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putBoolean("isLoggedIn", true);
                         editor.apply();
-                    } else {
-                        firebaseUser.sendEmailVerification();
-                        authProfile.signOut(); //Sign out user
-                        showAlertDialog();
-                    }
-
-                    if (firebaseUser != null) {
-                        DatabaseReference userRef = database.getReference().child("Registered Users").child(userId);
-                        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.exists()) {
-                                    Intent intent;
-                                    String userType = snapshot.child("userType").getValue(String.class);
-                                    assert userType != null;
-                                    // Identifies if the person loggin in is an admin or a user
-                                    switch (userType.toString().toLowerCase(Locale.ROOT)) {
-                                        case "admin":
-                                            intent = new Intent(LoginActivity.this, AdminView.class);
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            startActivity(intent);
-                                            break;
-                                        case "user":
-                                            intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            startActivity(intent);
-                                            break;
-                                        default:
-                                            Toast.makeText(LoginActivity.this, userType, Toast.LENGTH_SHORT).show();
-                                            break;
+                        if (firebaseUser != null) {
+                            DatabaseReference userRef = database.getReference().child("Registered Users").child(userId);
+                            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        Intent intent;
+                                        String userType = snapshot.child("userType").getValue(String.class);
+                                        assert userType != null;
+                                        // Identifies if the person loggin in is an admin or a user
+                                        switch (userType.toString().toLowerCase(Locale.ROOT)) {
+                                            case "admin":
+                                                intent = new Intent(LoginActivity.this, AdminView.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(intent);
+                                                break;
+                                            case "user":
+                                                intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(intent);
+                                                break;
+                                            default:
+                                                Toast.makeText(LoginActivity.this, userType, Toast.LENGTH_SHORT).show();
+                                                break;
+                                        }
                                     }
                                 }
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                Log.e(TAG, "onCancelled: ", error.toException());
-                                Toast.makeText(LoginActivity.this, "Login failed.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.e(TAG, "onCancelled: ", error.toException());
+                                    Toast.makeText(LoginActivity.this, "Login failed.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    } else {
+                        firebaseUser.sendEmailVerification();
+                        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("isLoggedIn", false);
+                        editor.apply();
+                        authProfile.signOut(); //Sign out user
+                        showAlertDialog();
                     }
 
                 } else {
