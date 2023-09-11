@@ -28,13 +28,19 @@ import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
     Context context;
     private List<ReadWriteUserDetails> userList;
-    private UserAdapter.OnItemClickListener itemClickListener;
-    String userID;
 
-    public UserAdapter(List<ReadWriteUserDetails> userList, OnItemClickListener itemClickListener, Context context) {
+    public UserAdapter(List<ReadWriteUserDetails> userList, Context context) {
         this.userList = userList;
-        this.itemClickListener = itemClickListener;
         this.context = context;
+    }
+
+    public void setFilteredList(List<ReadWriteUserDetails> filteredList) {
+        // below line is to add our filtered
+        // list in our course array list.
+        this.userList = filteredList;
+        // below line is to notify our adapter
+        // as change in recycler view data.
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -50,6 +56,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         holder.nameTextView.setText(user.getFullName());
         holder.genderTextView.setText(user.getGender());
         holder.birthdayTextView.setText(user.getBirthDate());
+        holder.userImageView.setImageResource(R.drawable.ic_baseline_person_24);
         if(user.getImageUrl() != null) {
             String[] imageRefParts = user.getImageUrl().split("/");
             String imageRef = new String(imageRefParts[3] + "/" + imageRefParts[4]);
@@ -75,14 +82,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                         })
                         .into(holder.userImageView);
             });
-
-            holder.itemView.setOnClickListener((v) -> {
-                Intent intent = new Intent(context, UserAttendanceAdminView.class);
-                intent.putExtra("userID", user.getUserId());
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-            });
         }
+        holder.itemView.setOnClickListener((v) -> {
+            Intent intent = new Intent(context, UserAttendanceAdminView.class);
+            intent.putExtra("userID", user.getUserId());
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -94,7 +100,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         void onItemClick(ReadWriteUserDetails user);
     }
 
-    public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class UserViewHolder extends RecyclerView.ViewHolder {
         private ImageView userImageView;
         private TextView nameTextView;
         private TextView genderTextView;
@@ -106,18 +112,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             nameTextView = itemView.findViewById(R.id.username);
             genderTextView = itemView.findViewById(R.id.gender);
             birthdayTextView = itemView.findViewById(R.id.birthday);
-
-            // Set click listener on the itemView
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            int position = getAdapterPosition();
-            if (position != RecyclerView.NO_POSITION) {
-                ReadWriteUserDetails user = userList.get(position);
-                itemClickListener.onItemClick(user);
-            }
         }
     }
 }

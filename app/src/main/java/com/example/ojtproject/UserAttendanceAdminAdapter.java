@@ -26,13 +26,20 @@ public class UserAttendanceAdminAdapter extends RecyclerView.Adapter<UserAttenda
 
     Context context;
     private List<ReadWriteUserTimeDetails> userTimeDetailsList;
-    private UserAttendanceAdminAdapter.OnItemClickListener itemClickListener;
     String acronym;
 
-    public UserAttendanceAdminAdapter(List<ReadWriteUserTimeDetails> userTimeDetailsList, UserAttendanceAdminAdapter.OnItemClickListener itemClickListener, Context context) {
+    public UserAttendanceAdminAdapter(List<ReadWriteUserTimeDetails> userTimeDetailsList, Context context) {
         this.userTimeDetailsList = userTimeDetailsList;
-        this.itemClickListener = itemClickListener;
         this.context = context;
+    }
+
+    public void setFilteredList(List<ReadWriteUserTimeDetails> filteredList) {
+        // below line is to add our filtered
+        // list in our course array list.
+        this.userTimeDetailsList = filteredList;
+        // below line is to notify our adapter
+        // as change in recycler view data.
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -54,7 +61,13 @@ public class UserAttendanceAdminAdapter extends RecyclerView.Adapter<UserAttenda
         holder.statusCodeTextView.setText(acronym);
 
         holder.itemView.setOnClickListener((v) -> {
-            Intent intent = new Intent(context, UserAttendanceAdminView.class);
+            Intent intent = new Intent(context, UserAttendanceAdminDetailView.class);
+            intent.putExtra("statusClockIn", String.valueOf(holder.statusClockInTextView.getText()));
+            intent.putExtra("statusClockOut", String.valueOf(holder.statusClockOutTextView.getText()));
+            intent.putExtra("clockIn", String.valueOf(holder.clockInTextView.getText()));
+            intent.putExtra("clockOut", String.valueOf(holder.clockOutTextView.getText()));
+            intent.putExtra("date", String.valueOf(holder.dateTextView.getText()));
+            intent.putExtra("statusCode", String.valueOf(holder.statusCodeTextView.getText()));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         });
@@ -67,7 +80,7 @@ public class UserAttendanceAdminAdapter extends RecyclerView.Adapter<UserAttenda
         void onItemClick(ReadWriteUserTimeDetails userTimeDetails);
     }
 
-    public class UserTimeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class UserTimeViewHolder extends RecyclerView.ViewHolder {
         private TextView statusCodeTextView;
         private TextView dateTextView;
         private TextView clockInTextView;
@@ -94,18 +107,6 @@ public class UserAttendanceAdminAdapter extends RecyclerView.Adapter<UserAttenda
                 acronym = "LU";
             } else {
                 acronym = "A";
-            }
-
-            // Set click listener on the itemView
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            int position = getAdapterPosition();
-            if (position != RecyclerView.NO_POSITION) {
-                ReadWriteUserTimeDetails userTime = userTimeDetailsList.get(position);
-                itemClickListener.onItemClick(userTime);
             }
         }
     }
