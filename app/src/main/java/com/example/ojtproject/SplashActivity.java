@@ -14,6 +14,12 @@ public class SplashActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getSupportActionBar() != null){
+            System.out.println("lalala");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
+        }
         setContentView(R.layout.activity_splash);
 
         new Handler().postDelayed(new Runnable() {

@@ -206,6 +206,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:elevation="10dp"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:indeterminateTint="@color/purple_500"/>
     </RelativeLayout>
 </ScrollView>

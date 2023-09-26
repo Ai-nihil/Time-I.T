@@ -227,7 +227,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:elevation="10dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:indeterminateTint="@color/purple_500"/>
 
     </FrameLayout>
     </ScrollView>

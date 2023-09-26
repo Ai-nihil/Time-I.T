@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         // Check if the user is logged in
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
-        String userType = sharedPreferences.getString("userRole", null);
+        String userType = sharedPreferences.getString("userRole", "user");
 
         // If logged in, redirect to HomePageActivity
         if (isLoggedIn) {

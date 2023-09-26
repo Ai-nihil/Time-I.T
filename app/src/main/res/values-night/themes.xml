@@ -12,6 +12,10 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <!--        <item name="colorControlNormal">@color/purple_500</item>-->
+        <item name="colorControlActivated">@color/purple_500</item>
+        <item name="colorAccent">@color/purple_500</item>
+        <!--        <item name="android:colorControlActivated">@color/purple_500</item>-->
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
 </resources>
