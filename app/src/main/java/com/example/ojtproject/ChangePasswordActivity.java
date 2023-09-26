@@ -48,6 +48,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
 
+        getSupportActionBar().setTitle("Change Password");
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         changePasswordActivityEditTextCurrentPassword = findViewById(R.id.changePasswordActivityEditTextCurrentPassword);

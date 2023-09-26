@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class AlarmReceiver extends BroadcastReceiver {
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -40,6 +41,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         String storedClockInTime = sharedPreferences.getString("lastTappedClockInTime", "");
         String storedClockInStatus = sharedPreferences.getString("lastTappedClockInStatus", "");
         Boolean storedClockInButtonTapped = sharedPreferences.getBoolean("clockInButtonTapped", false);
+        System.out.println(storedClockInButtonTapped);
 
         Calendar currentCalendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.getDefault());
@@ -62,7 +64,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         System.out.println(storedClockInDate);
         System.out.println(storedClockInTime);
 
-
         // Check if the user tapped the button for today
         if (!currentDayOfWeek.equals("Saturday") && !currentDayOfWeek.equals("Sunday")) {
             if (currentHour >= 18 && currentMinute >= 30) {
@@ -84,9 +85,9 @@ public class AlarmReceiver extends BroadcastReceiver {
                                     // Update the status to "Absent" with ServerValue.TIMESTAMP
                                     Map<String, Object> data = new HashMap<>();
                                     data.put("dateDay", currentDate);
-                                    data.put("dateClockInTime", "9:45:00 AM");
+                                    data.put("dateClockInTime", "9:45:00 am");
                                     data.put("clockInStatus", "Absent");
-                                    data.put("dateClockOutTime", "9:45:00 AM");
+                                    data.put("dateClockOutTime", "9:45:00 am");
                                     data.put("clockOutStatus", "Absent");
                                     data.put("timestamp", ServerValue.TIMESTAMP);
                                     userAttendanceRef.push().setValue(data);
@@ -98,8 +99,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 // Handle error
                             }
                         });
-
-
                     }
                 } else {
                     // Update clock-out status to "On-time" for today
@@ -133,17 +132,10 @@ public class AlarmReceiver extends BroadcastReceiver {
                                     data.put("dateDay", currentDate);
                                     data.put("dateClockInTime", amPmTimeFormat);
                                     data.put("clockInStatus", storedClockInStatus);
-                                    data.put("dateClockOutTime", "5:59:59 PM");
+                                    data.put("dateClockOutTime", "5:59:59 pm");
                                     data.put("clockOutStatus", "Undertime");
                                     data.put("timestamp", ServerValue.TIMESTAMP);
                                     userAttendanceRef.push().setValue(data);
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    // Set the flag value to false
-                                    editor.putBoolean("clockInButtonTapped", false);
-                                    editor.apply();
-                                    // Send a broadcast to indicate that the flag should be updated
-                                    Intent updateFlagIntent = new Intent("UPDATE_CLOCK_IN_FLAG");
-                                    context.sendBroadcast(updateFlagIntent);
                                 }
                             }
 
@@ -158,7 +150,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 editor.putBoolean("clockInButtonTapped", false);
                 editor.apply();
             } else {
-                System.out.println("It's not yet time to check if user is absent for the weekday!");
+                System.out.println("It's not yet time to check if user is absent or not for the weekday!");
             }
         } else {
             System.out.println("It's the weekends!");

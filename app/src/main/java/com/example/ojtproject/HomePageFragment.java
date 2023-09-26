@@ -33,11 +33,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class HomePageFragment extends Fragment {
 
@@ -116,9 +119,9 @@ public class HomePageFragment extends Fragment {
                                     Date dateClockInTime = inputFormat.parse(currentClockInTime);
                                     String militaryTimeFormat = outputFormat.format(dateClockInTime);
 
-                                    readWriteUserTimeDetails = new ReadWriteUserTimeDetails();
-                                    readWriteUserTimeDetails.setDateClockInTime(currentClockInTime);
-                                    readWriteUserTimeDetails.setDateDay(currentClockInDate);
+//                                    readWriteUserTimeDetails = new ReadWriteUserTimeDetails();
+//                                    readWriteUserTimeDetails.setDateClockInTime(currentClockInTime);
+//                                    readWriteUserTimeDetails.setDateDay(currentClockInDate);
 
                                     // Split the time string into hours, minutes, and seconds
                                     String[] currentClockInTimeParts = militaryTimeFormat.split(":");
@@ -142,18 +145,40 @@ public class HomePageFragment extends Fragment {
                                         //Employee absent during the 9:30:01-9:45:00 AM
                                         else if ((currentClockInHour == 9 && currentClockInMinute > 30 && currentClockInMinute < 45) || (currentClockInHour == 9 && currentClockInMinute == 30 && currentClockInSecond > 0) || (currentClockInHour == 9 && currentClockInMinute == 45 && currentClockInSecond == 0)) {
                                             clockInStatus = "Absent";
-                                            readWriteUserTimeDetails.setClockInStatus(clockInStatus);
                                             // Write the time record to the Firebase Realtime Database under the "attendance" node with the user's UID as the key
                                             ReadWriteUserTimeDetails readWriteUserTimeDetailsAbsent = new ReadWriteUserTimeDetails(currentClockInDate, currentClockInTime, clockInStatus, "9:45", "Absent");
                                             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                                            databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetailsAbsent);
+//                                            databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetailsAbsent);
+                                            DatabaseReference userAttendanceRef = databaseReference.child("Attendance").child(uid);
+                                            userAttendanceRef.orderByChild("dateDay").equalTo(currentClockInDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    if (!dataSnapshot.exists()) {
+                                                        // Update the status to "Absent"
+                                                        // Update the status to "Absent" with ServerValue.TIMESTAMP
+                                                        Map<String, Object> data = new HashMap<>();
+                                                        data.put("dateDay", readWriteUserTimeDetailsAbsent.getDateDay());
+                                                        data.put("dateClockInTime", readWriteUserTimeDetailsAbsent.getDateClockInTime());
+                                                        data.put("clockInStatus", readWriteUserTimeDetailsAbsent.getClockInStatus());
+                                                        data.put("dateClockOutTime", "9:45:00 am");
+                                                        data.put("clockOutStatus", "Absent");
+                                                        data.put("timestamp", ServerValue.TIMESTAMP);
+                                                        userAttendanceRef.push().setValue(data);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                    // Handle error
+                                                }
+                                            });
                                             Log.d("Military Time", militaryTimeFormat);
                                             Toast.makeText(getActivity(), "You are marked absent for today!", Toast.LENGTH_SHORT).show();
                                         }
                                         //Employee late during the 9:15:01-9:30:00 AM
                                         else if ((currentClockInHour == 9 && currentClockInMinute > 15 && currentClockInMinute < 30) || (currentClockInHour == 9 && currentClockInMinute == 15 && currentClockInSecond > 0) || (currentClockInHour == 9 && currentClockInMinute == 30 && currentClockInSecond == 0)) {
                                             clockInStatus = "Late";
-                                            readWriteUserTimeDetails.setClockInStatus(clockInStatus);
+//                                            readWriteUserTimeDetails.setClockInStatus(clockInStatus);
                                             homePageFragmentButtonClockInClicked = true;
                                             // Get the current date and time of the when the clock-in button was last tapped to determine if user is absent because of forgetting to tap the button for example
                                             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -168,7 +193,7 @@ public class HomePageFragment extends Fragment {
                                         //Employee present during the 8:45:00-9:15:00 AM
                                         else if ((currentClockInHour == 8 && currentClockInMinute >= 45) || (currentClockInHour == 9 && currentClockInMinute < 15) || (currentClockInHour == 9 && currentClockInMinute == 15 && currentClockInSecond == 0)) {
                                             clockInStatus = "On-time";
-                                            readWriteUserTimeDetails.setClockInStatus(clockInStatus);
+//                                            readWriteUserTimeDetails.setClockInStatus(clockInStatus);
                                             homePageFragmentButtonClockInClicked = true;
                                             // Get the current date and time of the when the clock-in button was last tapped to determine if user is absent because of forgetting to tap the button for example
                                             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -224,6 +249,7 @@ public class HomePageFragment extends Fragment {
                 currentUser = authProfile.getCurrentUser();
 
                 //Check if there is a user logged-in
+                homePageFragmentButtonClockInClicked = sharedPreferences.getBoolean("clockInButtonTapped", false);
                 if (homePageFragmentButtonClockInClicked == true) {
                     if (currentUser != null) {
                         String uid = currentUser.getUid();
@@ -255,7 +281,12 @@ public class HomePageFragment extends Fragment {
                                         Date dateClockOutTime = inputFormat.parse(currentClockOutTime);
                                         String militaryTimeFormat = outputFormat.format(dateClockOutTime);
 
+                                        readWriteUserTimeDetails = new ReadWriteUserTimeDetails();
+                                        readWriteUserTimeDetails.setDateDay(sharedPreferences.getString("lastTappedClockInDate", ""));
+                                        readWriteUserTimeDetails.setDateClockInTime(sharedPreferences.getString("lastTappedClockInTime", ""));
+                                        readWriteUserTimeDetails.setClockInStatus(sharedPreferences.getString("lastTappedClockInStatus", ""));
                                         readWriteUserTimeDetails.setDateClockOutTime(currentClockOutTime);
+
 
                                         // Split the time string into hours, minutes, and seconds
                                         String[] currentClockOutTimeParts = militaryTimeFormat.split(":");
@@ -282,7 +313,31 @@ public class HomePageFragment extends Fragment {
                                                 readWriteUserTimeDetails.setClockOutStatus(clockOutStatus);
                                                 //Write the time record to the Firebase Realtime Database under the "attendance" node with the user's UID as the key
                                                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                                                databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
+//                                                databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
+                                                DatabaseReference userAttendanceRef = databaseReference.child("Attendance").child(uid);
+
+                                                userAttendanceRef.orderByChild("dateDay").equalTo(currentClockOutDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        if (!dataSnapshot.exists()) {
+                                                            // Update the status to "Absent"
+                                                            // Update the status to "Absent" with ServerValue.TIMESTAMP
+                                                            Map<String, Object> data = new HashMap<>();
+                                                            data.put("dateDay", readWriteUserTimeDetails.getDateDay());
+                                                            data.put("dateClockInTime", readWriteUserTimeDetails.getDateClockInTime());
+                                                            data.put("clockInStatus", readWriteUserTimeDetails.getClockInStatus());
+                                                            data.put("dateClockOutTime", readWriteUserTimeDetails.getDateClockOutTime());
+                                                            data.put("clockOutStatus", readWriteUserTimeDetails.getClockOutStatus());
+                                                            data.put("timestamp", ServerValue.TIMESTAMP);
+                                                            userAttendanceRef.push().setValue(data);
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+                                                        // Handle error
+                                                    }
+                                                });
                                                 homePageFragmentButtonClockInClicked = false;
                                                 Log.d("Military Time", militaryTimeFormat);
                                                 Toast.makeText(getActivity(), "You successfully clocked-out!", Toast.LENGTH_SHORT).show();
@@ -293,7 +348,31 @@ public class HomePageFragment extends Fragment {
                                                 readWriteUserTimeDetails.setClockOutStatus(clockOutStatus);
                                                 // Write the time record to the Firebase Realtime Database under the "attendance" node with the user's UID as the key
                                                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                                                databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
+//                                                databaseReference.child("Attendance").child(uid).push().setValue(readWriteUserTimeDetails);
+                                                DatabaseReference userAttendanceRef = databaseReference.child("Attendance").child(uid);
+
+                                                userAttendanceRef.orderByChild("dateDay").equalTo(currentClockOutDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        if (!dataSnapshot.exists()) {
+                                                            // Update the status to "Absent"
+                                                            // Update the status to "Absent" with ServerValue.TIMESTAMP
+                                                            Map<String, Object> data = new HashMap<>();
+                                                            data.put("dateDay", readWriteUserTimeDetails.getDateDay());
+                                                            data.put("dateClockInTime", readWriteUserTimeDetails.getDateClockInTime());
+                                                            data.put("clockInStatus", readWriteUserTimeDetails.getClockInStatus());
+                                                            data.put("dateClockOutTime", readWriteUserTimeDetails.getDateClockOutTime());
+                                                            data.put("clockOutStatus", readWriteUserTimeDetails.getClockOutStatus());
+                                                            data.put("timestamp", ServerValue.TIMESTAMP);
+                                                            userAttendanceRef.push().setValue(data);
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+                                                        // Handle error
+                                                    }
+                                                });
                                                 homePageFragmentButtonClockInClicked = false;
                                                 Log.d("Military Time", militaryTimeFormat);
                                                 Toast.makeText(getActivity(), "You successfully clocked-out earlier than expected!", Toast.LENGTH_SHORT).show();
@@ -356,18 +435,51 @@ public class HomePageFragment extends Fragment {
             }
         });
 
-        // Calculate the time difference between the current time and the desired trigger time
-        // Trigger at 6:30:00 PM
-        int desiredHour = 18;
-        int desiredMinute = 30;
+//        // Calculate the time difference between the current time and the desired trigger time
+//        // Trigger at 6:30:00 PM
+//        int desiredHour = 18;
+//        int desiredMinute = 30;
+//
+//        // Get the current time in the desired timezone
+//        android.icu.util.Calendar currentTime = android.icu.util.Calendar.getInstance(android.icu.util.TimeZone.getTimeZone("Asia/Singapore"));
+//
+//        //Calculate the time difference of set time and current time
+//        long timeDifferenceMillis = calculateTimeDifference(currentTime, desiredHour, desiredMinute);
+//        //Call AlarmReceiver class at 9:45:00 AM:
+//        setupAlarm(timeDifferenceMillis);
 
-        // Get the current time in the desired timezone
-        android.icu.util.Calendar currentTime = android.icu.util.Calendar.getInstance(android.icu.util.TimeZone.getTimeZone("Asia/Singapore"));
-
-        //Calculate the time difference of set time and current time
-        long timeDifferenceMillis = calculateTimeDifference(currentTime, desiredHour, desiredMinute);
-        //Call AlarmReceiver class at 9:45:00 AM:
-        setupAlarm(timeDifferenceMillis);
+//        // Calculate the desired start time at 6:30:00 PM
+//        int startHour = 18;    // 18 corresponds to 6 PM in a 24-hour format
+//        int startMinute = 30;  // 30 corresponds to 30 minutes
+//        int startSecond = 0;   // 0  corresponds to 0 seconds
+//
+//// Calculate the desired end time at 11:59:59 PM
+//        int endHour = 23;      // 23 corresponds to 11 PM in a 24-hour format
+//        int endMinute = 59;    // 59 corresponds to 59 minutes
+//        int endSecond = 59;    // 59 corresponds to 59 seconds
+//
+//// Get the current time in the desired timezone
+//        android.icu.util.Calendar currentTime = android.icu.util.Calendar.getInstance(android.icu.util.TimeZone.getTimeZone("Asia/Singapore"));
+//
+//// Calculate the time difference to the next occurrence of 6:30 PM
+//        long startTimeDifferenceMillis = calculateTimeDifference(currentTime, startHour, startMinute, startSecond);
+//
+//// Calculate the time difference to exactly 11:59:59 PM
+//        long endTimeDifferenceMillis = calculateTimeDifference(currentTime, endHour, endMinute, endSecond);
+//
+//// Calculate the total time difference from the current time to 11:59:59 PM.
+//        long totalTimeDifference = endTimeDifferenceMillis - startTimeDifferenceMillis;
+//        int numberOfAlarms = (int) (totalTimeDifference / 5000) + 1; // Integer division
+//
+//// Call setupAlarm to set up the initial alarm for the start time difference
+//        setupAlarm(startTimeDifferenceMillis);
+//
+//// Schedule the remaining alarms to run every 5 seconds
+//        for (int i = 1; i <= numberOfAlarms; i++) {
+//            startTimeDifferenceMillis += 5000;  // Add 5 seconds
+//            setupAlarm(startTimeDifferenceMillis);
+//        }
+        setupAlarm();
 
         // Inflate the layout for this fragment
         return rootView;
@@ -375,51 +487,58 @@ public class HomePageFragment extends Fragment {
 
     //setupAlarm() method logic starts here
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void setupAlarm(long timeDifferenceMillis) {
+    private void setupAlarm() {
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(getActivity(), AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, PendingIntent.FLAG_MUTABLE);
 
         // Set up the AlarmManager to trigger at the calculated time
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeDifferenceMillis, pendingIntent);
+//        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeDifferenceMillis, pendingIntent);
+
+        System.out.println("gumana talaga mhie");
+        // Set up the AlarmManager to trigger every minute
+        long intervalMillis = 5 * 1000; // 1 minute in milliseconds
+
+        // Set the repeating alarm
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + intervalMillis, intervalMillis, pendingIntent);
     }
 
-    //calculateTimeDifference() method logic starts here
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private long calculateTimeDifference(android.icu.util.Calendar currentTime, int desiredHour, int desiredMinute) {
-        android.icu.util.Calendar triggerTime = (android.icu.util.Calendar) currentTime.clone();
-        triggerTime.set(android.icu.util.Calendar.HOUR_OF_DAY, desiredHour);
-        triggerTime.set(android.icu.util.Calendar.MINUTE, desiredMinute);
-        triggerTime.set(android.icu.util.Calendar.SECOND, 0);
-        triggerTime.set(android.icu.util.Calendar.MILLISECOND, 0);
+//    //calculateTimeDifference() method logic starts here
+//    @RequiresApi(api = Build.VERSION_CODES.N)
+//    private long calculateTimeDifference(android.icu.util.Calendar currentTime, int desiredHour, int desiredMinute, int desiredSecond) {
+//        android.icu.util.Calendar triggerTime = (android.icu.util.Calendar) currentTime.clone();
+//        triggerTime.set(android.icu.util.Calendar.HOUR_OF_DAY, desiredHour);
+//        triggerTime.set(android.icu.util.Calendar.MINUTE, desiredMinute);
+//        triggerTime.set(android.icu.util.Calendar.SECOND, desiredSecond);
+//        triggerTime.set(android.icu.util.Calendar.MILLISECOND, 0);
+//
+//        //Return time difference of 9:45:00 AM and whatever the current time is
+//        return triggerTime.getTimeInMillis() - currentTime.getTimeInMillis();
+//    }
 
-        //Return time difference of 9:45:00 AM and whatever the current time is
-        return triggerTime.getTimeInMillis() - currentTime.getTimeInMillis();
-    }
-
-    private BroadcastReceiver updateFlagReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Read the flag value from shared preferences
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPrefs", MODE_PRIVATE);
-            boolean clockInButtonTapped = sharedPreferences.getBoolean("clockInButtonTapped", false);
-
-            // Update your flag variable in HomePageActivity
-            homePageFragmentButtonClockInClicked = clockInButtonTapped;
-        }
-    };
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().registerReceiver(updateFlagReceiver, new IntentFilter("your_action_here"));
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        getActivity().unregisterReceiver(updateFlagReceiver);
-    }
+//    private BroadcastReceiver updateFlagReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            // Read the flag value from shared preferences
+//            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+//            boolean clockInButtonTapped = sharedPreferences.getBoolean("clockInButtonTapped", false);
+//
+//            // Update your flag variable in HomePageActivity
+//            homePageFragmentButtonClockInClicked = clockInButtonTapped;
+//        }
+//    };
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        getActivity().registerReceiver(updateFlagReceiver, new IntentFilter("your_action_here"));
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        getActivity().unregisterReceiver(updateFlagReceiver);
+//    }
 
 }

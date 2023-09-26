@@ -31,6 +31,8 @@ public class UserAttendanceAdminView extends AppCompatActivity implements UserAt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_attendance_admin_view);
 
+        getSupportActionBar().setTitle("Admin Attendance Records");
+
         searchView = findViewById(R.id.search_view);
         searchView.clearFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

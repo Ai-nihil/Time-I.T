@@ -75,6 +75,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadHomePageFragment() {
+        getSupportActionBar().setTitle("Home");
         HomePageFragment homePageFragment = new HomePageFragment();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.homeFragmentContainer, homePageFragment);
@@ -82,6 +83,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadUserAttendanceRecordsFragment() {
+        getSupportActionBar().setTitle("Attendance Records");
         UserAttendanceRecordsFragment userAttendanceRecordsFragment = new UserAttendanceRecordsFragment();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.homeFragmentContainer, userAttendanceRecordsFragment);
@@ -89,6 +91,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadUserProfileFragment() {
+        getSupportActionBar().setTitle("Profile Management");
         UserProfileFragment userProfileFragment = new UserProfileFragment();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.homeFragmentContainer, userProfileFragment);

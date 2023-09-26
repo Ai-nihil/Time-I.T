@@ -61,6 +61,8 @@ public class UserUpdateProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_update_profile);
 
+        getSupportActionBar().setTitle("Update Profile Information");
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         userUpdateProfileActivityProgressBar = findViewById(R.id.userUpdateProfileActivityProgressBar);

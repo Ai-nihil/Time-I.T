@@ -17,12 +17,19 @@ public class MainActivity extends AppCompatActivity {
         // Check if the user is logged in
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        String userType = sharedPreferences.getString("userRole", null);
 
         // If logged in, redirect to HomePageActivity
         if (isLoggedIn) {
-            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-            startActivity(intent);
-            finish(); // Optional: To prevent the user from coming back to the MainActivity using the back button
+            if(userType.equals("admin")) {
+                Intent intent = new Intent(MainActivity.this, AdminView.class);
+                startActivity(intent);
+                finish(); // Optional: To prevent the user from coming back to the MainActivity using the back button
+            } else {
+                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish(); // Optional: To prevent the user from coming back to the MainActivity using the back button
+            }
         }
         setContentView(R.layout.activity_main);
 

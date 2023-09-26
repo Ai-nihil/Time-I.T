@@ -5,11 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +35,8 @@ public class AdminView extends AppCompatActivity implements UserAdapter.OnItemCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_view);
+
+        getSupportActionBar().setTitle("Admin");
 
         searchView = findViewById(R.id.search_view);
         searchView.clearFocus();
@@ -94,5 +101,42 @@ public class AdminView extends AppCompatActivity implements UserAdapter.OnItemCl
     @Override
     public void onItemClick(ReadWriteUserDetails user) {
 
+    }
+
+    //Creating ActionBar Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //Inflate menu items
+        getMenuInflater().inflate(R.menu.admin_logout, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    //When any menu item is selected
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        FirebaseAuth authProfile;
+
+        switch (item.getItemId()){
+
+
+            case R.id.adminLogoutMenuItemLogout:
+                authProfile = FirebaseAuth.getInstance();
+                SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("isLoggedIn", false);//So when phone is opened, user will be redirected to the MainFragment instead of HomePageActivity
+                editor.apply();
+                Intent intent = new Intent(AdminView.this, MainActivity.class);
+
+                //Don't let user go back to HomePageActivity or any activities related opened after logout button was tapped if back button of phone is tapped
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                authProfile.signOut();
+                break;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

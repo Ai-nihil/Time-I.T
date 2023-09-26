@@ -146,7 +146,9 @@ public class LoginActivity extends AppCompatActivity {
                                         Intent intent;
                                         String userType = snapshot.child("userType").getValue(String.class);
                                         assert userType != null;
-                                        // Identifies if the person loggin in is an admin or a user
+                                        editor.putString("userRole", userType.toLowerCase());
+                                        editor.apply();
+                                        // Identifies if the person logging in is an admin or a user
                                         switch (userType.toString().toLowerCase(Locale.ROOT)) {
                                             case "admin":
                                                 intent = new Intent(LoginActivity.this, AdminView.class);

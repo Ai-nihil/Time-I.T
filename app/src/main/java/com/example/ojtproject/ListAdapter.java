@@ -20,6 +20,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
@@ -101,6 +103,16 @@ public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
     public void updateData(List<ReadWriteUserTimeDetails> newData) {
         readWriteUserTimeDetailsList.clear();
         readWriteUserTimeDetailsList.addAll(newData);
+        // Sort the list by timestamp in descending order (latest to earliest)
+        Collections.sort(readWriteUserTimeDetailsList, new Comparator<ReadWriteUserTimeDetails>() {
+            @Override
+            public int compare(ReadWriteUserTimeDetails item1, ReadWriteUserTimeDetails item2) {
+                // Compare timestamps here, assuming they are Long values
+                Long timestamp1 = item1.getTimestamp();
+                Long timestamp2 = item2.getTimestamp();
+                return timestamp2.compareTo(timestamp1); // Sort in descending order
+            }
+        });
         notifyDataSetChanged();
     }
 
@@ -119,6 +131,17 @@ public class ListAdapter extends ArrayAdapter<ReadWriteUserTimeDetails> {
                         ReadWriteUserTimeDetails readWriteUserTimeDetails = recordSnapshot.getValue(ReadWriteUserTimeDetails.class);
                         readWriteUserTimeDetailsList.add(readWriteUserTimeDetails);
                     }
+
+                    // Sort the list by timestamp in descending order (latest to earliest)
+                    Collections.sort(readWriteUserTimeDetailsList, new Comparator<ReadWriteUserTimeDetails>() {
+                        @Override
+                        public int compare(ReadWriteUserTimeDetails item1, ReadWriteUserTimeDetails item2) {
+                            // Compare timestamps here, assuming they are Long values
+                            Long timestamp1 = item1.getTimestamp();
+                            Long timestamp2 = item2.getTimestamp();
+                            return timestamp2.compareTo(timestamp1); // Sort in descending order
+                        }
+                    });
 
                     notifyDataSetChanged();
                 }

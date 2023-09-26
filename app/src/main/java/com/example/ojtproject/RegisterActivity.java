@@ -67,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        getSupportActionBar().setTitle("Register");
+        getSupportActionBar().setTitle("Create an Account");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

@@ -49,6 +49,8 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_profile_picture);
 
+        getSupportActionBar().setTitle("Update Display Profile");
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Button uploadProfilePictureActivityButtonChoosePicture = findViewById(R.id.uploadProfilePictureActivityButtonChoosePicture);

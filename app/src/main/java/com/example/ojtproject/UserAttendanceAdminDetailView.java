@@ -25,6 +25,8 @@ public class UserAttendanceAdminDetailView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_attendance_admin_detail_view);
 
+        getSupportActionBar().setTitle("Admin Attendance Record Details");
+
         statusClockInTextView = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockInStatusValue);
         statusClockOutTextView = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockOutStatusValue);
         clockInTextView = findViewById(R.id.userAttendanceRecordDetailsActivityTextViewClockInTimeValue);

@@ -32,6 +32,8 @@ public class UserAttendanceRecordDetailsActivity extends AppCompatActivity {
         binding = ActivityUserAttendanceRecordDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        getSupportActionBar().setTitle("Attendance Record Details");
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = this.getIntent();
