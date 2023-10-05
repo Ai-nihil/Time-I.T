@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
+    //Global variables
     private Button forgotPasswordActivityButtonPasswordReset;
     private EditText forgotPasswordActivityEditTextPasswordResetEmail;
     private ProgressBar forgotPasswordActivityProgressBar;
@@ -32,6 +33,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
+        //Activity title initialization
         getSupportActionBar().setTitle("Forgot Password");
 
         forgotPasswordActivityEditTextPasswordResetEmail = findViewById(R.id.forgotPasswordActivityEditTextPasswordResetEmail);
@@ -43,6 +45,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = forgotPasswordActivityEditTextPasswordResetEmail.getText().toString();
 
+                //Validations when password reset is tapped
                 if(TextUtils.isEmpty(email)){
                     Toast.makeText(ForgotPasswordActivity.this, "Please enter your registered email", Toast.LENGTH_SHORT).show();
                     forgotPasswordActivityEditTextPasswordResetEmail.setError("Email is required");
@@ -59,6 +62,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         });
     }
 
+    //Reset password method when validations are met
     private void resetPassword(String email) {
         authProfile = FirebaseAuth.getInstance();
         authProfile.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {

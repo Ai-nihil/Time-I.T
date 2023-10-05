@@ -23,6 +23,7 @@ public class CustomSwipeRefreshLayout extends SwipeRefreshLayout {
         gestureDetector = new GestureDetector(context, new GestureListener());
     }
 
+    //On intercept touch event method
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         gestureDetector.onTouchEvent(ev);
@@ -32,6 +33,7 @@ public class CustomSwipeRefreshLayout extends SwipeRefreshLayout {
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
         private static final int SWIPE_THRESHOLD = 100;
 
+        //On fling method to determine if user wants to scroll up or refresh instead
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             float deltaY = e2.getY() - e1.getY();

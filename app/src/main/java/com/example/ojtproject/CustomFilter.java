@@ -10,12 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomFilter extends Filter {
+
+    //Global variables
     private final List<ReadWriteUserTimeDetails> toBeModifiedList;
     private final List<ReadWriteUserTimeDetails> originalList;
     private final ListAdapter adapter;
     private CustomFilterListener customFilterListener;
     private Boolean hasMatches;
 
+    //Constructor for custom filter
     public CustomFilter(ListAdapter adapter, List<ReadWriteUserTimeDetails> originalList, CustomFilterListener customFilterListener) {
         this.adapter = adapter;
         this.toBeModifiedList = new ArrayList<>(originalList); // Create a copy of the original list
@@ -24,6 +27,7 @@ public class CustomFilter extends Filter {
         this.hasMatches = false;
     }
 
+    //Perform filtering method with the matches filter method put new data entries in the filtered list
     @Override
     protected FilterResults performFiltering(CharSequence constraint) {
         FilterResults results = new FilterResults();
@@ -48,6 +52,7 @@ public class CustomFilter extends Filter {
         return results;
     }
 
+    //Publish results method to change the list view of the attendance record
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results) {
         List<ReadWriteUserTimeDetails> filteredList = (List<ReadWriteUserTimeDetails>) results.values;
@@ -67,6 +72,7 @@ public class CustomFilter extends Filter {
         customFilterListener.onFilterResults(hasMatches);
     }
 
+    //Matches filter method to check if search view contents match any data in the attendance record
     private boolean matchesFilter(ReadWriteUserTimeDetails item, String filterPattern) {
         return item.getDateDay().toLowerCase().contains(filterPattern)
                 || item.getDateClockInTime().toLowerCase().contains(filterPattern)

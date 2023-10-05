@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
+    //Global variables
     private FirebaseAuth authProfile;
     private EditText changePasswordActivityEditTextCurrentPassword,
                      changePasswordActivityEditTextNewPassword,
@@ -48,10 +49,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
 
+        //Activity title initialization
         getSupportActionBar().setTitle("Change Password");
 
+        //Action bar display enabled
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //Current Password edit text view validation for cancel button
         changePasswordActivityEditTextCurrentPassword = findViewById(R.id.changePasswordActivityEditTextCurrentPassword);
         changePasswordActivityEditTextCurrentPassword.addTextChangedListener(new TextWatcher() {
             @Override
@@ -76,6 +80,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         changePasswordActivityEditTextNewPassword = findViewById(R.id.changePasswordActivityEditTextNewPassword);
         changePasswordActivityEditTextConfirmPassword = findViewById(R.id.changePasswordActivityEditTextConfirmPassword);
         changePasswordActivityButtonAuthenticate = findViewById(R.id.changePasswordActivityButtonAuthenticate);
+        //Authenticate button enabled validation for cancel button
         if(!changePasswordActivityButtonAuthenticate.isEnabled()){
             changesMadeAuthentication = true;
         } else {
@@ -96,6 +101,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         authProfile = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = authProfile.getCurrentUser();
 
+        //If there is no user currently logged in
         if (firebaseUser == null){
             Toast.makeText(this, "Something went wrong! User's details not available", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(ChangePasswordActivity.this, HomeActivity.class);
@@ -112,7 +118,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 userCurrentPassword = changePasswordActivityEditTextCurrentPassword.getText().toString();
-
+                //Validation for current password edit text view
                 if(TextUtils.isEmpty(userCurrentPassword)){
                     Toast.makeText(ChangePasswordActivity.this, "Password is required", Toast.LENGTH_SHORT).show();
                     changePasswordActivityEditTextCurrentPassword.setError("Please enter your current password to authenticate");
@@ -184,6 +190,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         String userNewPassword = changePasswordActivityEditTextNewPassword.getText().toString();
         String userNewConfirmPassword = changePasswordActivityEditTextConfirmPassword.getText().toString();
 
+        //Validations for new password and confirm new password edit text views
         if (TextUtils.isEmpty(userNewPassword)){
             Toast.makeText(this, "New Password is needed!", Toast.LENGTH_SHORT).show();
             changePasswordActivityEditTextNewPassword.setError("Please enter your new password!");
@@ -203,6 +210,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         } else {
             changePasswordActivityProgressBar.setVisibility(View.VISIBLE);
 
+            //Update password in firebase
             firebaseUser.updatePassword(userNewPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -263,6 +271,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //Contact Us method
     private void openEmailAppChooser() {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
         emailIntent.setData(Uri.parse("mailto:")); // Only email apps should handle this
@@ -279,6 +288,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
     }
 
+    //Cancel button method
     public void onBackPressed() {
         if (changesMadeCurrentPassword == true || changesMadeAuthentication == true) {
             // Changes have been made, show confirmation dialog
@@ -291,6 +301,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
     }
 
+    //Exit confirmation dialog when cancel button is pressed
     private void showExitConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_exit, null);

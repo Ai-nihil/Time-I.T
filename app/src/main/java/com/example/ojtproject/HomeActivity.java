@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class HomeActivity extends AppCompatActivity {
 
+    //Global variables
     private FragmentManager fragmentManager;
     private String fragmentToLoad;
     FirebaseAuth authProfile;
@@ -26,6 +27,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        //setting up fragment manager
         fragmentManager = getSupportFragmentManager();
 
         if (savedInstanceState == null) {
@@ -37,23 +39,24 @@ public class HomeActivity extends AppCompatActivity {
         if (intent != null) {
             fragmentToLoad = intent.getStringExtra("openedFrom");
             if (fragmentToLoad != null && fragmentToLoad.equals("UserProfileFragment")) { // Replace with fragment identifier
-                // Programmatically select the bottom navigation menu item
+                // Programmatically select the bottom navigation menu item to user profile fragment
                 BottomNavigationView homeFragmentBottomNavigationView = findViewById(R.id.homeFragmentBottomNavigationView);
                 homeFragmentBottomNavigationView.setSelectedItemId(R.id.bottomNavigationMenuItemProfile);
                 loadUserProfileFragment(); // Custom method to load the fragment
             } else if (fragmentToLoad != null && fragmentToLoad.equals("UserAttendanceRecordsFragment")) {
-                // Programmatically select the bottom navigation menu item
+                // Programmatically select the bottom navigation menu item to user attendance records fragment
                 BottomNavigationView homeFragmentBottomNavigationView = findViewById(R.id.homeFragmentBottomNavigationView);
                 homeFragmentBottomNavigationView.setSelectedItemId(R.id.bottomNavigationMenuItemAttendanceRecords);
                 loadUserAttendanceRecordsFragment(); // Custom method to load the fragment
             } else {
-                // Programmatically select the bottom navigation menu item
+                // Programmatically select the bottom navigation menu item to user home page fragment
                 BottomNavigationView homeFragmentBottomNavigationView = findViewById(R.id.homeFragmentBottomNavigationView);
                 homeFragmentBottomNavigationView.setSelectedItemId(R.id.bottomNavigationMenuItemHome);
                 loadHomePageFragment(); // Custom method to load the fragment
             }
         }
 
+        //Loading fragments based on tapped bottom navigation menu item
         BottomNavigationView homeFragmentBottomNavigationView = findViewById(R.id.homeFragmentBottomNavigationView);
         homeFragmentBottomNavigationView.setOnItemSelectedListener(item ->{
 

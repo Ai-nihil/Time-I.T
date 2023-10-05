@@ -36,6 +36,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        //SharedPreferences initialization
         SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefs", MODE_PRIVATE);
         String storedClockInDate = sharedPreferences.getString("lastTappedClockInDate", "");
         String storedClockInTime = sharedPreferences.getString("lastTappedClockInTime", "");
@@ -43,30 +44,38 @@ public class AlarmReceiver extends BroadcastReceiver {
         Boolean storedClockInButtonTapped = sharedPreferences.getBoolean("clockInButtonTapped", false);
         System.out.println(storedClockInButtonTapped);
 
+        //Get the Date in EEEE, MMMM dd, yyyy from system calendar and make it use Asia/Singapore timezone
         Calendar currentCalendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.getDefault());
         dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
         String currentDate = dateFormat.format(currentCalendar.getTime());
 
+        //Split the currentDate string using the comma as the divider to get the day of the week
         String[] currentDateParts = currentDate.split(",");
         String currentDayOfWeek = currentDateParts[0];
 
+        //Get the Time in HH:mm:ss format from system calendar and make it use Asia/Singapore timezone
         currentCalendar = Calendar.getInstance();
         SimpleDateFormat dateTimeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         dateTimeFormat.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
         String currentTime = dateTimeFormat.format(currentCalendar.getTime());
 
+        //Split the currentTime string using the colon as the divider to get the hour, minute, and second of the day
         String[] currentTimeParts = currentTime.split(":");
         int currentHour = Integer.parseInt(currentTimeParts[0]);
         int currentMinute = Integer.parseInt(currentTimeParts[1]);
         int currentSecond = Integer.parseInt(currentTimeParts[2]);
 
+        //Logs
         System.out.println(storedClockInDate);
         System.out.println(storedClockInTime);
 
         // Check if the user tapped the button for today
+        // Check if the day is a weekend
         if (!currentDayOfWeek.equals("Saturday") && !currentDayOfWeek.equals("Sunday")) {
+            //Check if current time is 6:00 PM to 12:00:00 MN
             if (currentHour >= 18 && currentMinute >= 30) {
+                //Check if employee tapped the clock-in button or not
                 if (storedClockInButtonTapped == false) {
                     // Update status to "Absent" for today
                     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -77,6 +86,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                         DatabaseReference userAttendanceRef = databaseReference.child("Attendance").child(uid);
 
+                        //Add the data to Firebase
                         userAttendanceRef.orderByChild("dateDay").equalTo(currentDate).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -110,6 +120,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                         DatabaseReference userAttendanceRef = databaseReference.child("Attendance").child(uid);
 
+                        //Add the data to Firebase
                         userAttendanceRef.orderByChild("dateDay").equalTo(currentDate).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
